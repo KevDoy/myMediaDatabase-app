@@ -1,0 +1,16 @@
+{
+  "posterMode": "remote",
+  "coverMode": "remote",
+  "tmdbImageBase": "https://image.tmdb.org/t/p/w500",
+  "customFields": [],
+  "featured": true,
+  "modes": ["movies", "tv", "games"],
+  "defaultMode": "movies",
+  "gameApi": "igdb",
+  "igdbProxyUrl": "",
+
+  "tmdbApiKey": "YOUR_TMDB_API_KEY_HERE",
+  "rawgApiKey": "YOUR_RAWG_API_KEY_HERE",
+  "igdbClientId": "YOUR_IGDB_CLIENT_ID_HERE",
+  "igdbClientSecret": "YOUR_IGDB_CLIENT_SECRET_HERE"
+}

@@ -1,0 +1,581 @@
+[
+  {
+    "tmdbId": 4589,
+    "title": "Arrested Development",
+    "firstAirDate": "2003-11-02",
+    "overview": "The story of a wealthy family that lost everything, and the one son who had no choice but to keep them all together.",
+    "posterPath": "/p4r4RD7RsNcJVoz0H6z3dBoTBtW.jpg",
+    "genres": [
+      "Comedy"
+    ],
+    "creator": "Mitchell Hurwitz",
+    "cast": [
+      "Jason Bateman",
+      "Portia De Rossi",
+      "Will Arnett"
+    ],
+    "rating": 4,
+    "tags": [],
+    "customTags": {},
+    "totalSeasons": 5,
+    "seasons": [
+      {
+        "seasonNumber": 1,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 2,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 3,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 4,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 5,
+        "physical": null,
+        "digital": []
+      }
+    ],
+    "boxSet": {
+      "physical": null,
+      "digital": [
+        "Apple TV"
+      ]
+    },
+    "watched": true
+  },
+  {
+    "tmdbId": 1396,
+    "title": "Breaking Bad",
+    "firstAirDate": "2008-01-20",
+    "overview": "Walter White, a New Mexico chemistry teacher, is diagnosed with Stage III cancer and given a prognosis of only two years left to live. He becomes filled with a sense of fearlessness and an unrelenting desire to secure his family's financial future at any cost as he enters the dangerous world of drugs and crime.",
+    "posterPath": "/ztkUQFLlC19CCMYHW9o1zWhJRNq.jpg",
+    "genres": [
+      "Drama",
+      "Crime"
+    ],
+    "creator": "Vince Gilligan",
+    "cast": [
+      "Bryan Cranston",
+      "Aaron Paul",
+      "Anna Gunn"
+    ],
+    "rating": 4.5,
+    "tags": [],
+    "customTags": {},
+    "totalSeasons": 5,
+    "seasons": [
+      {
+        "seasonNumber": 1,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 2,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 3,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 4,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 5,
+        "physical": null,
+        "digital": []
+      }
+    ],
+    "boxSet": {
+      "physical": null,
+      "digital": [
+        "Apple TV"
+      ]
+    },
+    "watched": true
+  },
+  {
+    "tmdbId": 30991,
+    "title": "Cowboy Bebop",
+    "firstAirDate": "1998-04-03",
+    "overview": "In 2071, roughly fifty years after an accident with a hyperspace gateway made the Earth almost uninhabitable, humanity has colonized most of the rocky planets and moons of the Solar System. Amid a rising crime rate, the Inter Solar System Police (ISSP) set up a legalized contract system, in which registered bounty hunters, also referred to as \"Cowboys\", chase criminals and bring them in alive in return for a reward.",
+    "posterPath": "/xDiXDfZwC6XYC6fxHI1jl3A3Ill.jpg",
+    "genres": [
+      "Animation",
+      "Action & Adventure",
+      "Sci-Fi & Fantasy",
+      "Western"
+    ],
+    "creator": "",
+    "cast": [
+      "Koichi Yamadera",
+      "Unsho Ishizuka",
+      "Megumi Hayashibara"
+    ],
+    "rating": 0,
+    "tags": [],
+    "customTags": {},
+    "totalSeasons": 1,
+    "seasons": [
+      {
+        "seasonNumber": 1,
+        "physical": null,
+        "digital": []
+      }
+    ],
+    "boxSet": {
+      "physical": null,
+      "digital": [
+        "Apple TV"
+      ]
+    }
+  },
+  {
+    "tmdbId": 4313,
+    "title": "Full House",
+    "firstAirDate": "1987-09-22",
+    "overview": "After the death of his wife, Danny enlists his best friend and his brother-in-law to help raise his three daughters, D.J., Stephanie, and Michelle.",
+    "posterPath": "/7g0EyKsIaYjYw3gCIBKMHHE0Kcu.jpg",
+    "genres": [
+      "Comedy",
+      "Family"
+    ],
+    "creator": "Jeff Franklin",
+    "cast": [
+      "John Stamos",
+      "Bob Saget",
+      "Dave Coulier"
+    ],
+    "rating": 3,
+    "tags": [],
+    "customTags": {},
+    "totalSeasons": 8,
+    "seasons": [
+      {
+        "seasonNumber": 1,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 2,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 3,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 4,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 5,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 6,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 7,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 8,
+        "physical": null,
+        "digital": []
+      }
+    ],
+    "boxSet": {
+      "physical": null,
+      "digital": [
+        "Apple TV"
+      ]
+    },
+    "watched": true
+  },
+  {
+    "tmdbId": 1104,
+    "title": "Mad Men",
+    "firstAirDate": "2007-07-19",
+    "overview": "Set in 1960-1970 New York, this sexy, stylized and provocative drama follows the lives of the ruthlessly competitive men and women of Madison Avenue advertising.",
+    "posterPath": "/7v8iCNzKFpdlrCMcqCoJyn74Nsa.jpg",
+    "genres": [
+      "Drama"
+    ],
+    "creator": "Matthew Weiner",
+    "cast": [
+      "Jon Hamm",
+      "Elisabeth Moss",
+      "Vincent Kartheiser"
+    ],
+    "rating": 5,
+    "tags": [],
+    "customTags": {},
+    "totalSeasons": 7,
+    "seasons": [
+      {
+        "seasonNumber": 1,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 2,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 3,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 4,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 5,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 6,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 7,
+        "physical": null,
+        "digital": []
+      }
+    ],
+    "boxSet": {
+      "physical": null,
+      "digital": [
+        "Apple TV",
+        "YouTube",
+        "Plex"
+      ]
+    },
+    "watched": true
+  },
+  {
+    "tmdbId": 62560,
+    "title": "Mr. Robot",
+    "firstAirDate": "2015-06-24",
+    "overview": "A young programmer, Elliot, suffers from a debilitating anti-social disorder and decides that he can only connect to people by hacking them. He wields his skills as a weapon to protect the people that he cares about. Elliot finds himself in the intersection between a cybersecurity firm he works for and the underworld organizations that are recruiting him to bring down corporate America.",
+    "posterPath": "/kv1nRqgebSsREnd7vdC2pSGjpLo.jpg",
+    "genres": [
+      "Crime",
+      "Drama"
+    ],
+    "creator": "Sam Esmail",
+    "cast": [
+      "Rami Malek",
+      "Christian Slater",
+      "Carly Chaikin"
+    ],
+    "rating": 4.5,
+    "tags": [],
+    "customTags": {},
+    "totalSeasons": 4,
+    "seasons": [
+      {
+        "seasonNumber": 1,
+        "physical": "Blu-Ray",
+        "digital": [
+          "Apple TV",
+          "Plex"
+        ]
+      },
+      {
+        "seasonNumber": 2,
+        "physical": "Blu-Ray",
+        "digital": [
+          "Apple TV",
+          "Plex"
+        ]
+      },
+      {
+        "seasonNumber": 3,
+        "physical": "Blu-Ray",
+        "digital": [
+          "Apple TV",
+          "YouTube",
+          "Plex"
+        ]
+      },
+      {
+        "seasonNumber": 4,
+        "physical": "Blu-Ray",
+        "digital": [
+          "Apple TV",
+          "YouTube",
+          "Plex"
+        ]
+      }
+    ],
+    "boxSet": {
+      "physical": "Blu-Ray",
+      "digital": [
+        "Apple TV",
+        "Plex"
+      ]
+    },
+    "watched": true
+  },
+  {
+    "tmdbId": 4556,
+    "title": "Scrubs",
+    "firstAirDate": "2001-10-02",
+    "overview": "In the unreal world of Sacred Heart Hospital, John \"J.D.\" Dorian learns the ways of medicine, friendship and life.",
+    "posterPath": "/w7ri7byEYLdciSZOwWHj6TUAX7j.jpg",
+    "genres": [
+      "Comedy"
+    ],
+    "creator": "Bill Lawrence",
+    "cast": [
+      "Zach Braff",
+      "Donald Faison",
+      "John C. McGinley"
+    ],
+    "rating": 4,
+    "tags": [],
+    "customTags": {},
+    "totalSeasons": 9,
+    "seasons": [
+      {
+        "seasonNumber": 1,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 2,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 3,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 4,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 5,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 6,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 7,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 8,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 9,
+        "physical": null,
+        "digital": []
+      }
+    ],
+    "boxSet": {
+      "physical": null,
+      "digital": [
+        "Apple TV"
+      ]
+    },
+    "watched": true
+  },
+  {
+    "tmdbId": 295778,
+    "title": "Scrubs",
+    "firstAirDate": "2026-02-25",
+    "overview": "J.D. & Turk scrub in together for the first time in a long time\u2013medicine has changed, interns have changed, but their bromance has stood the test of time. Characters new and old navigate the waters of Sacred Heart with laughter, heart and some surprises along the way.",
+    "posterPath": "/nNNM50G7p9C3n4vgidCiybsIdHA.jpg",
+    "genres": [
+      "Comedy"
+    ],
+    "creator": "Bill Lawrence",
+    "cast": [
+      "Zach Braff",
+      "Donald Faison",
+      "Sarah Chalke"
+    ],
+    "rating": 0,
+    "tags": [],
+    "customTags": {},
+    "totalSeasons": 1,
+    "seasons": [
+      {
+        "seasonNumber": 1,
+        "physical": null,
+        "digital": [
+          "Apple TV"
+        ]
+      }
+    ],
+    "boxSet": {
+      "physical": null,
+      "digital": null
+    }
+  },
+  {
+    "tmdbId": 37680,
+    "title": "Suits",
+    "firstAirDate": "2011-06-23",
+    "overview": "While running from a drug deal gone bad, Mike Ross, a brilliant young college-dropout, slips into a job interview with one of New York City's best legal closers, Harvey Specter. Tired of cookie-cutter law school grads, Harvey takes a gamble by hiring Mike on the spot after he recognizes his raw talent and photographic memory.",
+    "posterPath": "/vQiryp6LioFxQThywxbC6TuoDjy.jpg",
+    "genres": [
+      "Drama"
+    ],
+    "creator": "Aaron Korsh",
+    "cast": [
+      "Gabriel Macht",
+      "Rick Hoffman",
+      "Sarah Rafferty"
+    ],
+    "rating": 0,
+    "tags": [],
+    "customTags": {},
+    "totalSeasons": 9,
+    "seasons": [
+      {
+        "seasonNumber": 1,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 2,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 3,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 4,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 5,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 6,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 7,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 8,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 9,
+        "physical": null,
+        "digital": []
+      }
+    ],
+    "boxSet": {
+      "physical": null,
+      "digital": [
+        "Apple TV"
+      ]
+    },
+    "watched": true
+  },
+  {
+    "tmdbId": 58957,
+    "title": "Nathan for You",
+    "firstAirDate": "2013-02-28",
+    "overview": "Self-proclaimed business expert, writer, director and comedian Nathan Fielder helps real small businesses turn a profit with marketing tactics that no ordinary consultant would dare to attempt. From driving foot traffic to an off-the-strip souvenir shop by using Hollywood flair and a Johnny Depp impersonator, to creating a rebate that can only be redeemed by climbing a mountain, to founding a coffee shop called \"Dumb Starbucks,\u201d Nathan has always gone to the limit to make his ideas come to life. With his unorthodox approach to problem solving, Nathan\u2019s genuine efforts to do good often draw the real people he encounters into an experience far beyond what they signed up for.",
+    "posterPath": "/6tGXlz61c44onUg6EdRkbhjcaPA.jpg",
+    "genres": [
+      "Comedy",
+      "Documentary"
+    ],
+    "creator": "Nathan Fielder, Michael Koman",
+    "cast": [
+      "Nathan Fielder"
+    ],
+    "rating": 0,
+    "tags": [],
+    "customTags": {},
+    "totalSeasons": 4,
+    "seasons": [
+      {
+        "seasonNumber": 1,
+        "physical": null,
+        "digital": [
+          "YouTube"
+        ]
+      },
+      {
+        "seasonNumber": 2,
+        "physical": null,
+        "digital": []
+      },
+      {
+        "seasonNumber": 3,
+        "physical": null,
+        "digital": [
+          "YouTube"
+        ]
+      },
+      {
+        "seasonNumber": 4,
+        "physical": null,
+        "digital": [
+          "YouTube"
+        ]
+      }
+    ],
+    "boxSet": {
+      "physical": null,
+      "digital": null
+    },
+    "watched": true
+  }
+]

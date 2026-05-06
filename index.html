@@ -1,0 +1,232 @@
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>My Media DB</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="favicon.ico" sizes="48x48">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#121212">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="My Media DB">
+  <link rel="apple-touch-icon" sizes="120x120" href="assets/icons/icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="assets/icons/icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="167x167" href="assets/icons/icon-167x167.png">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="My Media DB">
+  <meta property="og:description" content="A personal media collection tracker — catalog your physical and digital library.">
+  <meta property="og:image" content="assets/icons/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="1200">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="My Media DB">
+  <meta name="twitter:description" content="A personal media collection tracker — catalog your physical and digital library.">
+  <meta name="twitter:image" content="assets/icons/og-image.png">
+
+  <meta name="description" content="A personal media collection tracker — catalog your physical and digital library.">
+
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/vendor/bootstrap-icons/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="spinner-border" role="status"><span class="visually-hidden">Loading…</span></div>
+    <p>Loading your library…</p>
+  </div>
+
+  <!-- ===== GLASS HEADER (all sizes) ===== -->
+  <header class="me-header" id="meHeader">
+    <!-- Liquid-glass logo: HTML div for real backdrop-filter + SVG overlay for gradients/strokes -->
+    <div class="me-logo" role="img" aria-label="My Media DB">
+      <!-- Backdrop blur — HTML div masked to logo shapes, backdrop-filter blurs page content behind it -->
+      <div class="me-logo-glass"></div>
+      <!-- SVG overlay: gradient tints + contour strokes -->
+      <svg class="me-logo-svg" viewBox="0 0 841.5 263" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <clipPath id="logo-grad-clip">
+            <path d="M42.8,263C19.2,263,0,243.8,0,220.2V42.8C0,19.2,19.2,0,42.8,0c23.6,0,42.8,19.2,42.8,42.8v177.4C85.6,243.8,66.4,263,42.8,263z"/>
+            <path d="M128.4,179.5c-23.6,0-42.8-19.2-42.8-42.8V42.8C85.6,19.2,104.7,0,128.4,0c23.6,0,42.8,19.2,42.8,42.8v93.9C171.1,160.3,152,179.5,128.4,179.5z"/>
+            <path d="M213.9,263c-23.6,0-42.8-19.2-42.8-42.8V42.8c0-23.6,19.2-42.8,42.8-42.8c23.6,0,42.8,19.2,42.8,42.8v177.4C256.7,243.8,237.5,263,213.9,263z"/>
+            <path d="M303.5,263c-23.6,0-42.8-19.2-42.8-42.8V42.8c0-23.6,19.2-42.8,42.8-42.8c23.6,0,42.8,19.2,42.8,42.8v177.4C346.3,243.8,327.1,263,303.5,263z"/>
+            <path d="M389.1,179.5c-23.6,0-42.8-19.2-42.8-42.8V42.8c0-23.6,19.2-42.8,42.8-42.8c23.6,0,42.8,19.2,42.8,42.8v93.9C431.8,160.3,412.7,179.5,389.1,179.5z"/>
+            <path d="M474.6,263c-23.6,0-42.8-19.2-42.8-42.8V42.8C431.8,19.2,451,0,474.6,0c23.6,0,42.8,19.2,42.8,42.8v177.4C517.4,243.8,498.2,263,474.6,263z"/>
+            <path d="M549.1,263c-15.3,0-27.7-12.4-27.7-27.7V27.7c0-15.3,12.4-27.7,27.7-27.7c72.6,0,131.5,58.9,131.5,131.5C680.6,204.1,621.7,263,549.1,263z"/>
+            <path d="M775.8,131.5h-65.2c-15.6,0-28.2-12.6-28.2-28.2v-75C682.3,12.6,695,0,710.6,0l65.2,0c36.3,0,65.7,29.4,65.7,65.7C841.5,102.1,812.1,131.5,775.8,131.5z"/>
+            <path d="M775.8,263h-65.2c-15.6,0-28.2-12.6-28.2-28.2v-75c0-15.6,12.6-28.2,28.2-28.2h65.2c36.3,0,65.7,29.4,65.7,65.7C841.5,233.5,812.1,263,775.8,263z"/>
+          </clipPath>
+          <linearGradient id="logo-glass-grad" x1="0" y1="0" x2="841.5" y2="263" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#b4b4b4" stop-opacity=".22"/>
+            <stop offset="40%" stop-color="#787878" stop-opacity=".15"/>
+            <stop offset="60%" stop-color="#505050" stop-opacity=".20"/>
+            <stop offset="100%" stop-color="#969696" stop-opacity=".18"/>
+          </linearGradient>
+          <linearGradient id="logo-inset-v" x1="0" y1="0" x2="0" y2="263" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity=".20"/>
+            <stop offset="8%" stop-color="#ffffff" stop-opacity=".06"/>
+            <stop offset="90%" stop-color="#000000" stop-opacity=".04"/>
+            <stop offset="100%" stop-color="#000000" stop-opacity=".15"/>
+          </linearGradient>
+          <linearGradient id="logo-inset-h" x1="0" y1="0" x2="841.5" y2="0" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity=".10"/>
+            <stop offset="15%" stop-color="#ffffff" stop-opacity="0"/>
+            <stop offset="85%" stop-color="#ffffff" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#ffffff" stop-opacity=".10"/>
+          </linearGradient>
+          <radialGradient id="logo-specular" cx="200" cy="40" r="350" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity=".28"/>
+            <stop offset="40%" stop-color="#ffffff" stop-opacity=".08"/>
+            <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <!-- Glass gradient layers — clipped to all shapes -->
+        <g clip-path="url(#logo-grad-clip)">
+          <rect width="841.5" height="263" fill="url(#logo-glass-grad)"/>
+          <rect width="841.5" height="263" fill="url(#logo-inset-v)"/>
+          <rect width="841.5" height="263" fill="url(#logo-inset-h)"/>
+          <rect width="841.5" height="263" fill="url(#logo-specular)"/>
+        </g>
+        <!-- Thin border strokes contouring every individual shape -->
+        <path d="M42.8,263C19.2,263,0,243.8,0,220.2V42.8C0,19.2,19.2,0,42.8,0c23.6,0,42.8,19.2,42.8,42.8v177.4C85.6,243.8,66.4,263,42.8,263z" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+        <path d="M128.4,179.5c-23.6,0-42.8-19.2-42.8-42.8V42.8C85.6,19.2,104.7,0,128.4,0c23.6,0,42.8,19.2,42.8,42.8v93.9C171.1,160.3,152,179.5,128.4,179.5z" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+        <path d="M213.9,263c-23.6,0-42.8-19.2-42.8-42.8V42.8c0-23.6,19.2-42.8,42.8-42.8c23.6,0,42.8,19.2,42.8,42.8v177.4C256.7,243.8,237.5,263,213.9,263z" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+        <path d="M303.5,263c-23.6,0-42.8-19.2-42.8-42.8V42.8c0-23.6,19.2-42.8,42.8-42.8c23.6,0,42.8,19.2,42.8,42.8v177.4C346.3,243.8,327.1,263,303.5,263z" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+        <path d="M389.1,179.5c-23.6,0-42.8-19.2-42.8-42.8V42.8c0-23.6,19.2-42.8,42.8-42.8c23.6,0,42.8,19.2,42.8,42.8v93.9C431.8,160.3,412.7,179.5,389.1,179.5z" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+        <path d="M474.6,263c-23.6,0-42.8-19.2-42.8-42.8V42.8C431.8,19.2,451,0,474.6,0c23.6,0,42.8,19.2,42.8,42.8v177.4C517.4,243.8,498.2,263,474.6,263z" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+        <path d="M549.1,263c-15.3,0-27.7-12.4-27.7-27.7V27.7c0-15.3,12.4-27.7,27.7-27.7c72.6,0,131.5,58.9,131.5,131.5C680.6,204.1,621.7,263,549.1,263z" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+        <path d="M775.8,131.5h-65.2c-15.6,0-28.2-12.6-28.2-28.2v-75C682.3,12.6,695,0,710.6,0l65.2,0c36.3,0,65.7,29.4,65.7,65.7C841.5,102.1,812.1,131.5,775.8,131.5z" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+        <path d="M775.8,263h-65.2c-15.6,0-28.2-12.6-28.2-28.2v-75c0-15.6,12.6-28.2,28.2-28.2h65.2c36.3,0,65.7,29.4,65.7,65.7C841.5,233.5,812.1,263,775.8,263z" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+      </svg>
+    </div>
+    <div class="me-mode-toggle" id="modeToggle" style="display:none">
+      <button class="me-mode-btn" data-mode="featured" aria-label="Featured"><i class="bi bi-stars"></i><span class="me-mode-label"> Featured</span></button>
+      <button class="me-mode-btn active" data-mode="movies" aria-label="Movies"><i class="bi bi-film"></i><span class="me-mode-label"> Movies</span></button>
+      <button class="me-mode-btn" data-mode="tv" aria-label="TV Shows"><i class="bi bi-tv"></i><span class="me-mode-label"> TV</span></button>
+      <button class="me-mode-btn" data-mode="games" aria-label="Games"><i class="bi bi-controller"></i><span class="me-mode-label"> Games</span></button>
+    </div>
+    <div class="me-active-filter" id="activeFilterPill">
+      <span id="activeFilterLabel">All Movies</span>
+    </div>
+    <div class="me-header-right">
+      <div class="me-sort-bubble" id="sortBubble">
+        <button class="me-sort-btn active" data-sort="date-desc" aria-label="Sort by recent"><i class="bi bi-calendar"></i></button>
+        <button class="me-sort-btn" data-sort="alpha-asc" aria-label="Sort A-Z"><i class="bi bi-sort-alpha-down"></i></button>
+        <button class="me-sort-btn" data-sort="rating-desc" aria-label="Sort by rating"><i class="bi bi-hand-thumbs-up"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== FILTER BAR (all sizes) ===== -->
+  <div class="me-filter-bar" id="meFilterBar">
+    <div class="me-filter-scroll" id="me-filter-chips"></div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container mt-3" id="mainContent">
+    <!-- Poster Grid -->
+    <div id="poster-grid" class="poster-grid"></div>
+  </div>
+
+  <!-- Detail Modal (Desktop) -->
+  <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content glass-modal">
+        <div class="modal-header">
+          <h5 class="modal-title" id="detail-title"></h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-5">
+              <img id="detail-poster" class="detail-poster" src="" alt="">
+            </div>
+            <div class="col-md-7">
+              <p class="detail-meta" id="detail-date"></p>
+              <div class="detail-stars" id="detail-rating"></div>
+              <div class="genre-tags" id="detail-genres"></div>
+              <div id="detail-credits"></div>
+              <p class="detail-overview" id="detail-overview"></p>
+              <div class="format-badges" id="detail-formats"></div>
+              <div id="detail-seasons"></div>
+              <div id="detail-copies"></div>
+              <div id="detail-tags"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail Full-Screen -->
+  <div id="detail-fullscreen" class="detail-fullscreen">
+    <!-- Blurred poster background (liquid glass) -->
+    <div class="fs-bg" id="fs-bg" aria-hidden="true"></div>
+    <div class="fs-bg-scrim" aria-hidden="true"></div>
+
+    <div class="fs-header glass-bar">
+      <button type="button" class="fs-back-btn" aria-label="Back" onclick="App.closeFullScreen()">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+      <strong id="fs-title"></strong>
+      <div class="fs-header-spacer"></div>
+    </div>
+
+    <!-- Poster hero: cropped strip on mobile, tap to expand -->
+    <div class="fs-poster-hero" id="fs-poster-hero">
+      <img id="fs-poster" class="fs-poster" src="" alt="">
+      <div class="fs-poster-expand-hint">
+        <i class="bi bi-arrows-fullscreen"></i>
+      </div>
+    </div>
+
+    <!-- Expanded poster overlay -->
+    <div class="fs-poster-overlay" id="fs-poster-overlay">
+      <img id="fs-poster-full" class="fs-poster-full" src="" alt="">
+    </div>
+
+    <div class="fs-body">
+      <p class="detail-meta" id="fs-date"></p>
+      <div class="detail-stars" id="fs-rating"></div>
+      <div class="genre-tags" id="fs-genres"></div>
+      <div id="fs-credits"></div>
+      <p class="detail-overview" id="fs-overview"></p>
+      <div class="format-badges" id="fs-formats"></div>
+      <div id="fs-seasons"></div>
+      <div id="fs-copies"></div>
+      <div id="fs-tags"></div>
+    </div>
+  </div>
+
+  <!-- ===== SEARCH (liquid glass, all sizes) ===== -->
+  <div class="me-search" id="meSearch">
+    <div class="me-search-expanded" id="meSearchExpanded">
+      <input type="search" id="mobile-search-box" placeholder="Start Typing to Filter" autocomplete="off">
+      <button class="me-search-submit" aria-label="Search"><i class="bi bi-search"></i></button>
+    </div>
+    <button class="me-search-collapsed" id="meSearchCollapsed" aria-label="Search">
+      <i class="bi bi-search"></i>
+    </button>
+  </div>
+
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
+</body>
+</html>
