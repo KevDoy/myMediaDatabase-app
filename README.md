@@ -1,4 +1,4 @@
-<img src="assets/logos/mmdb-single color.svg" height="70" alt="My Media DB">
+<img src="assets/icons/icon-120x120.png" height="70" alt="MMDB - myMediaDatabase">
 
 # My Media DB
 
