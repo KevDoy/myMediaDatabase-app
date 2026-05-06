@@ -1,6 +1,6 @@
 <img src="assets/icons/icon-120x120.png" height="70" alt="MMDB - myMediaDatabase">
 
-# My Media DB
+# myMediaDatabase - MMDB
 
 A self-hosted personal media collection tracker — catalog your physical and digital library of movies, TV shows, and games in one place.
 
