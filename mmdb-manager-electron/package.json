@@ -1,0 +1,59 @@
+{
+  "name": "my-media-database",
+  "version": "1.0.0",
+  "description": "My Media Database — Desktop Library Manager for Movies, TV Shows & Games",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --mac",
+    "build:win": "electron-builder --win",
+    "build:linux": "electron-builder --linux",
+    "build:all": "electron-builder --mac --win --linux"
+  },
+  "build": {
+    "appId": "com.mymediadatabase.app",
+    "productName": "My Media Database",
+    "mac": {
+      "target": ["dmg", "dir"],
+      "category": "public.app-category.entertainment",
+      "icon": "icon.icns"
+    },
+    "win": {
+      "target": ["nsis"],
+      "icon": "icon.ico"
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "icon": "icon.png",
+      "category": "AudioVideo"
+    },
+    "dmg": {
+      "title": "My Media Database",
+      "iconSize": 80,
+      "contents": [
+        { "x": 130, "y": 220 },
+        { "x": 410, "y": 220, "type": "link", "path": "/Applications" }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer.js",
+      "index.html",
+      "styles.css",
+      "logos/**/*",
+      "node_modules/**/*"
+    ]
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.10"
+  },
+  "devDependencies": {
+    "electron": "^29.0.0",
+    "electron-builder": "^25.1.8"
+  }
+}

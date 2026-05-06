@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; img-src 'self' file: https://image.tmdb.org https://media.rawg.io https://images.igdb.com data:; connect-src 'self';">
+  <title>My Media Database</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- macOS drag region -->
+  <header id="titlebar">
+    <div class="titlebar-drag"></div>
+    <span class="titlebar-title">My Media Database</span>
+  </header>
+
+  <div id="app-shell">
+
+    <!-- ─── Sidebar ─── -->
+    <nav id="sidebar">
+      <!-- 3-way mode toggle -->
+      <div id="mode-toggle" class="mode-toggle">
+        <button class="mode-btn active" data-mode="movies">Movies</button>
+        <button class="mode-btn" data-mode="tv">TV Shows</button>
+        <button class="mode-btn" data-mode="games">Games</button>
+      </div>
+      <ul class="sidebar-nav">
+        <li class="nav-item active" data-view="library">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h4v4H2V2zm0 6h4v4H2V8zm6-6h4v4H8V2zm0 6h4v4H8V8zM14 2h0v4h0V2zm0 6h0v4h0V8z"/></svg>
+          Library
+        </li>
+        <li class="nav-item" data-view="add">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 2a1 1 0 011 1v4h4a1 1 0 110 2H9v4a1 1 0 11-2 0V9H3a1 1 0 110-2h4V3a1 1 0 011-1z"/></svg>
+          <span id="nav-add-label">Add Movie</span>
+        </li>
+        <li class="nav-item" data-view="batch">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M1 3h14v2H1V3zm0 4h14v2H1V7zm0 4h14v2H1v-2z"/></svg>
+          Batch Add
+        </li>
+        <li class="nav-item" data-view="import">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M7.5 1v7.79L5.35 6.65a.5.5 0 10-.7.7l3 3a.5.5 0 00.7 0l3-3a.5.5 0 00-.7-.7L8.5 8.79V1h-1zM2 12v2a1 1 0 001 1h10a1 1 0 001-1v-2h-1v2H3v-2H2z"/></svg>
+          Import
+        </li>
+        <li class="nav-item" data-view="settings">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 10a2 2 0 100-4 2 2 0 000 4zm6.32-1.906l-1.018-.588a5.54 5.54 0 000-1.012l1.018-.588a.3.3 0 00.136-.352 6.01 6.01 0 00-1.322-2.29.3.3 0 00-.374-.072l-1.018.588a5.3 5.3 0 00-.876-.506V2.097a.3.3 0 00-.238-.294A6.07 6.07 0 009.31 1.5a.3.3 0 00-.31.182L8.412 2.87a5.4 5.4 0 00-1.012 0L6.812 1.68a.3.3 0 00-.31-.18c-.42.072-.832.192-1.224.354a.3.3 0 00-.178.306v1.116a5.3 5.3 0 00-.876.506L3.206 3.2a.3.3 0 00-.376.072 6.01 6.01 0 00-1.32 2.29.3.3 0 00.136.352l1.018.588a5.5 5.5 0 000 1.012l-1.018.588a.3.3 0 00-.136.352 6.03 6.03 0 001.322 2.29.3.3 0 00.374.072l1.018-.588c.272.21.566.384.876.506v1.176a.3.3 0 00.238.294c.39.102.794.16 1.2.2a.3.3 0 00.31-.18l.588-1.188a5.4 5.4 0 001.012 0l.588 1.188a.3.3 0 00.31.18c.42-.072.832-.192 1.224-.354a.3.3 0 00.178-.306V11.22c.31-.122.604-.296.876-.506l1.018.588a.3.3 0 00.376-.072 6.03 6.03 0 001.32-2.29.3.3 0 00-.136-.352z"/></svg>
+          Settings
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <span class="movie-count" id="sidebar-count">0 titles</span>
+      </div>
+    </nav>
+
+    <!-- ─── Main content ─── -->
+    <main id="content">
+
+      <!-- ===== SETUP VIEW ===== -->
+      <section id="view-setup" class="view active">
+        <div class="setup-card">
+          <div class="setup-icon">🎬</div>
+          <h1>Welcome to My Media Database</h1>
+          <p>Point to your local library directory to get started. This should be the root of your My Media Database repository clone.</p>
+          <button class="btn btn-primary" id="setup-choose-dir">Choose Library Directory…</button>
+        </div>
+      </section>
+
+      <!-- ===== LIBRARY VIEW ===== -->
+      <section id="view-library" class="view">
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <input type="search" id="lib-search" class="search-field" placeholder="Search titles…">
+            <select id="lib-genre-filter" class="select-field">
+              <option value="">All Genres</option>
+            </select>
+            <!-- Movies: format filter -->
+            <select id="lib-format-filter" class="select-field">
+              <option value="">All Formats</option>
+            </select>
+            <!-- Games: platform filter -->
+            <select id="lib-platform-filter" class="select-field" style="display:none">
+              <option value="">All Platforms</option>
+            </select>
+            <select id="lib-sort" class="select-field">
+              <option value="title-asc">Title A→Z</option>
+              <option value="title-desc">Title Z→A</option>
+              <option value="date-desc">Newest First</option>
+              <option value="date-asc">Oldest First</option>
+              <option value="rating-desc">Highest Rated</option>
+              <option value="added-desc">Recently Added</option>
+            </select>
+          </div>
+          <div class="toolbar-right">
+            <div class="view-toggle" id="view-toggle">
+              <button class="toggle-btn active" data-mode="grid" title="Grid View">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><rect x="0" y="0" width="6" height="6" rx="1"/><rect x="8" y="0" width="6" height="6" rx="1"/><rect x="0" y="8" width="6" height="6" rx="1"/><rect x="8" y="8" width="6" height="6" rx="1"/></svg>
+              </button>
+              <button class="toggle-btn" data-mode="list" title="List View">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><rect x="0" y="1" width="14" height="2.5" rx="1"/><rect x="0" y="5.75" width="14" height="2.5" rx="1"/><rect x="0" y="10.5" width="14" height="2.5" rx="1"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div id="library-container" class="library-grid"></div>
+      </section>
+
+      <!-- ===== ADD / EDIT (shared shell — inner content toggled by mode) ===== -->
+      <section id="view-add" class="view">
+        <div class="form-container">
+          <div class="form-actions sticky-actions">
+            <h2 id="add-heading">Add Movie</h2>
+            <div class="form-actions-buttons">
+              <button type="submit" form="item-form" class="btn btn-primary" id="btn-save">Add Movie</button>
+              <button type="button" class="btn" id="btn-cancel-edit" style="display:none">Cancel</button>
+              <button type="button" class="btn btn-danger" id="btn-delete" style="display:none">Delete</button>
+            </div>
+          </div>
+
+          <!-- TMDB search wrapper (movies & TV) -->
+          <div class="search-wrapper" id="tmdb-search-wrapper">
+            <label>Search TMDB</label>
+            <input type="text" id="tmdb-search-input" class="text-field" placeholder="Type a title…">
+            <ul id="tmdb-results-list" class="tmdb-dropdown"></ul>
+          </div>
+          <!-- RAWG / IGDB search wrapper (games) -->
+          <div class="search-wrapper" id="rawg-search-wrapper" style="display:none">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+              <label style="margin:0">Search IGDB</label>
+              <div id="game-api-toggle" class="toggle-group" style="display:none">
+                <button type="button" class="toggle-btn active" data-game-api="igdb">IGDB</button>
+                <button type="button" class="toggle-btn" data-game-api="rawg">RAWG</button>
+              </div>
+            </div>
+            <input type="text" id="rawg-search-input" class="text-field" placeholder="Type a game title…">
+            <ul id="rawg-results-list" class="tmdb-dropdown"></ul>
+          </div>
+
+          <form id="item-form" class="movie-form">
+            <!-- shared hidden -->
+            <input type="hidden" id="f-tmdbId">
+            <input type="hidden" id="f-rawgId">
+            <input type="hidden" id="f-igdbId">
+            <input type="hidden" id="f-posterPath">
+            <input type="hidden" id="f-coverPath">
+            <input type="hidden" id="f-genres">
+            <input type="hidden" id="f-director">
+            <input type="hidden" id="f-creator">
+            <input type="hidden" id="f-cast">
+            <input type="hidden" id="f-developer">
+            <input type="hidden" id="f-publisher">
+            <input type="hidden" id="f-availablePlatforms">
+
+            <div class="form-row">
+              <div class="form-group flex-2">
+                <label>Title</label>
+                <input type="text" id="f-title" class="text-field" required>
+              </div>
+              <div class="form-group flex-1">
+                <label id="f-date-label">Release Date</label>
+                <input type="date" id="f-releaseDate" class="text-field">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Overview</label>
+              <textarea id="f-overview" class="text-field" rows="3"></textarea>
+            </div>
+
+            <!-- Poster / Cover preview -->
+            <div class="form-row">
+              <div class="poster-preview" id="poster-preview">
+                <span class="poster-placeholder">No Poster</span>
+              </div>
+              <div class="form-col flex-1">
+                <!-- Rating -->
+                <div class="form-group">
+                  <label>Rating</label>
+                  <div id="star-picker" class="star-picker"></div>
+                </div>
+                <!-- Tags -->
+                <div class="form-group">
+                  <label>Tags</label>
+                  <div class="tag-input-row">
+                    <input type="text" id="f-tag-input" class="text-field" placeholder="Add tag…">
+                    <button type="button" class="btn btn-sm" id="f-tag-add">Add</button>
+                  </div>
+                  <div class="tag-list" id="f-tag-list"></div>
+                </div>
+                <!-- Movies/TV: Watched -->
+                <div class="form-group" id="watched-group">
+                  <label class="check-label"><input type="checkbox" id="f-watched"> Watched</label>
+                </div>
+                <!-- Games: Played/Completed -->
+                <div class="form-group" id="played-group" style="display:none">
+                  <label class="check-label"><input type="checkbox" id="f-played"> Played</label>
+                  <label class="check-label" style="margin-left:12px"><input type="checkbox" id="f-completed"> Completed</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Custom Fields -->
+            <div class="form-group" id="custom-fields-group" style="display:none">
+              <label>Custom Fields</label>
+              <div class="format-chips" id="custom-field-chips"></div>
+            </div>
+
+            <!-- Movie Formats -->
+            <div class="form-group" id="movie-formats-group">
+              <label>Formats Owned</label>
+              <div class="format-sections">
+                <div class="format-section">
+                  <span class="format-heading">Physical</span>
+                  <div class="format-chips">
+                    <label class="format-chip"><input type="checkbox" class="fmt-cb" value="VCD" data-cat="physical"><img src="logos/vcd.svg" alt="" class="chip-logo"><span>VCD</span></label>
+                    <label class="format-chip"><input type="checkbox" class="fmt-cb" value="DVD" data-cat="physical"><img src="logos/dvd.svg" alt="" class="chip-logo"><span>DVD</span></label>
+                    <label class="format-chip"><input type="checkbox" class="fmt-cb" value="Blu-Ray" data-cat="physical"><img src="logos/blu-ray.svg" alt="" class="chip-logo"><span>Blu-Ray</span></label>
+                    <label class="format-chip"><input type="checkbox" class="fmt-cb" value="UHD Blu-Ray" data-cat="physical"><img src="logos/uhd-blu-ray.svg" alt="" class="chip-logo"><span>UHD Blu-Ray</span></label>
+                    <label class="format-chip"><input type="checkbox" class="fmt-cb" value="3D DVD" data-cat="physical"><img src="logos/dvd-3d.svg" alt="" class="chip-logo"><span>3D DVD</span></label>
+                    <label class="format-chip"><input type="checkbox" class="fmt-cb" value="3D Blu-Ray" data-cat="physical"><img src="logos/blu-ray-3d.svg" alt="" class="chip-logo"><span>3D Blu-Ray</span></label>
+                  </div>
+                </div>
+                <div class="format-section">
+                  <span class="format-heading">Digital</span>
+                  <div class="format-chips">
+                    <label class="format-chip"><input type="checkbox" class="fmt-cb" value="Apple TV" data-cat="digital"><img src="logos/apple-tv.svg" alt="" class="chip-logo"><span>Apple TV</span></label>
+                    <label class="format-chip"><input type="checkbox" class="fmt-cb" value="YouTube" data-cat="digital"><img src="logos/youtube.svg" alt="" class="chip-logo"><span>YouTube</span></label>
+                    <label class="format-chip"><input type="checkbox" class="fmt-cb" value="Google Play" data-cat="digital"><img src="logos/google-play.svg" alt="" class="chip-logo"><span>Google Play</span></label>
+                    <label class="format-chip"><input type="checkbox" class="fmt-cb" value="Fandango At Home" data-cat="digital"><img src="logos/fandango-at-home.svg" alt="" class="chip-logo"><span>Fandango</span></label>
+                    <label class="format-chip"><input type="checkbox" class="fmt-cb" value="Xfinity" data-cat="digital"><img src="logos/xfinity.svg" alt="" class="chip-logo"><span>Xfinity</span></label>
+                    <label class="format-chip"><input type="checkbox" class="fmt-cb" value="Verizon" data-cat="digital"><img src="logos/verizon.svg" alt="" class="chip-logo"><span>Verizon</span></label>
+                    <label class="format-chip"><input type="checkbox" class="fmt-cb" value="DirecTV" data-cat="digital"><img src="logos/directv.svg" alt="" class="chip-logo"><span>DirecTV</span></label>
+                    <label class="format-chip"><input type="checkbox" class="fmt-cb" value="Prime Video" data-cat="digital"><img src="logos/prime-video.svg" alt="" class="chip-logo"><span>Prime Video</span></label>
+                    <label class="format-chip"><input type="checkbox" class="fmt-cb" value="Movies Anywhere" data-cat="digital"><img src="logos/moviesanywhere.png" alt="" class="chip-logo"><span>Movies Anywhere</span></label>
+                    <label class="format-chip"><input type="checkbox" class="fmt-cb" value="Plex" data-cat="digital"><img src="logos/plex.svg" alt="" class="chip-logo"><span>Plex</span></label>
+                  </div>
+                </div>
+                <div class="format-section">
+                  <span class="format-heading">Digital Quality</span>
+                  <div class="format-chips">
+                    <label class="format-chip chip-quality"><input type="checkbox" class="dq-cb" value="UHD"><span>UHD</span></label>
+                    <label class="format-chip chip-quality"><input type="checkbox" class="dq-cb" value="HD"><span>HD</span></label>
+                    <label class="format-chip chip-quality"><input type="checkbox" class="dq-cb" value="SD"><span>SD</span></label>
+                    <label class="format-chip chip-quality"><input type="checkbox" class="dq-cb" value="3D"><span>3D</span></label>
+                  </div>
+                </div>
+              </div>
+              <div id="movie-backed-up-section" style="display:none;margin-top:8px">
+                <label class="check-label"><input type="checkbox" id="f-backedUp"> Backed up?</label>
+              </div>
+            </div>
+            <div class="form-group" id="tv-seasons-group" style="display:none">
+              <label>Seasons</label>
+              <div class="tv-boxset-section">
+                <span class="format-heading">Complete Box Set</span>
+                <div class="boxset-row">
+                  <label class="check-label"><input type="checkbox" id="boxset-physical-cb"> Physical</label>
+                  <select id="boxset-physical-format" class="select-field" style="display:none;width:140px">
+                    <option value="">Select…</option>
+                    <option value="DVD">DVD</option>
+                    <option value="Blu-Ray">Blu-Ray</option>
+                    <option value="UHD Blu-Ray">UHD Blu-Ray</option>
+                  </select>
+                  <span id="boxset-backedup-section" style="display:none;margin-left:8px"><label class="check-label"><input type="checkbox" id="boxset-backedup-cb"> Backed up?</label></span>
+                  <label class="check-label" style="margin-left:16px"><input type="checkbox" id="boxset-digital-cb"> Digital</label>
+                </div>
+                <div id="boxset-digital-formats" class="format-chips boxset-digital-chips" style="display:none"></div>
+              </div>
+              <div class="tv-perseason-section">
+                <div class="season-header-row">
+                  <span class="format-heading">Individual Seasons</span>
+                  <div class="season-header-actions">
+                    <label>Total Seasons</label>
+                    <input type="number" id="f-totalSeasons" class="text-field" min="1" value="1" style="width:60px">
+                    <button type="button" class="btn btn-sm" id="btn-build-seasons">Build</button>
+                  </div>
+                </div>
+                <div id="seasons-builder"></div>
+              </div>
+            </div>
+
+            <!-- Game Copies -->
+            <div class="form-group" id="copies-group" style="display:none">
+              <label>Copies Owned</label>
+              <div id="copies-builder"></div>
+              <button type="button" class="btn btn-sm" id="btn-add-copy" style="margin-top:8px">+ Add Copy</button>
+            </div>
+
+          </form>
+        </div>
+      </section>
+
+      <!-- ===== BATCH ADD ===== -->
+      <section id="view-batch" class="view">
+        <div class="form-container">
+          <h2 id="batch-heading">Batch Add Movies</h2>
+          <p class="muted" id="batch-description">Search and queue multiple titles, then add them all at once.</p>
+
+          <div class="batch-controls">
+            <!-- Movie format presets -->
+            <div class="form-group" id="batch-movie-formats">
+              <label>Default Format Preset</label>
+              <div class="format-chips">
+                <label class="format-chip"><input type="checkbox" class="batch-fmt" value="Apple TV" data-cat="digital"><img src="logos/apple-tv.svg" alt="" class="chip-logo"><span>Apple TV</span></label>
+                <label class="format-chip"><input type="checkbox" class="batch-fmt" value="YouTube" data-cat="digital"><img src="logos/youtube.svg" alt="" class="chip-logo"><span>YouTube</span></label>
+                <label class="format-chip"><input type="checkbox" class="batch-fmt" value="Google Play" data-cat="digital"><img src="logos/google-play.svg" alt="" class="chip-logo"><span>Google Play</span></label>
+                <label class="format-chip"><input type="checkbox" class="batch-fmt" value="Fandango At Home" data-cat="digital"><img src="logos/fandango-at-home.svg" alt="" class="chip-logo"><span>Fandango</span></label>
+                <label class="format-chip"><input type="checkbox" class="batch-fmt" value="Prime Video" data-cat="digital"><img src="logos/prime-video.svg" alt="" class="chip-logo"><span>Prime Video</span></label>
+                <label class="format-chip"><input type="checkbox" class="batch-fmt" value="Movies Anywhere" data-cat="digital"><img src="logos/moviesanywhere.png" alt="" class="chip-logo"><span>Movies Anywhere</span></label>
+                <label class="format-chip"><input type="checkbox" class="batch-fmt" value="Plex" data-cat="digital"><img src="logos/plex.svg" alt="" class="chip-logo"><span>Plex</span></label>
+                <label class="format-chip"><input type="checkbox" class="batch-fmt" value="DVD" data-cat="physical"><img src="logos/dvd.svg" alt="" class="chip-logo"><span>DVD</span></label>
+                <label class="format-chip"><input type="checkbox" class="batch-fmt" value="Blu-Ray" data-cat="physical"><img src="logos/blu-ray.svg" alt="" class="chip-logo"><span>Blu-Ray</span></label>
+                <label class="format-chip"><input type="checkbox" class="batch-fmt" value="UHD Blu-Ray" data-cat="physical"><img src="logos/uhd-blu-ray.svg" alt="" class="chip-logo"><span>UHD Blu-Ray</span></label>
+              </div>
+            </div>
+            <!-- TV box-set digital presets -->
+            <div class="form-group" id="batch-tv-formats" style="display:none">
+              <label>Box Set Digital Services (applied to all seasons)</label>
+              <div class="format-chips">
+                <label class="format-chip"><input type="checkbox" class="batch-tv-fmt" value="Apple TV"><img src="logos/apple-tv.svg" alt="" class="chip-logo"><span>Apple TV</span></label>
+                <label class="format-chip"><input type="checkbox" class="batch-tv-fmt" value="YouTube"><img src="logos/youtube.svg" alt="" class="chip-logo"><span>YouTube</span></label>
+                <label class="format-chip"><input type="checkbox" class="batch-tv-fmt" value="Google Play"><img src="logos/google-play.svg" alt="" class="chip-logo"><span>Google Play</span></label>
+                <label class="format-chip"><input type="checkbox" class="batch-tv-fmt" value="Fandango At Home"><img src="logos/fandango-at-home.svg" alt="" class="chip-logo"><span>Fandango</span></label>
+                <label class="format-chip"><input type="checkbox" class="batch-tv-fmt" value="Prime Video"><img src="logos/prime-video.svg" alt="" class="chip-logo"><span>Prime Video</span></label>
+                <label class="format-chip"><input type="checkbox" class="batch-tv-fmt" value="Plex"><img src="logos/plex.svg" alt="" class="chip-logo"><span>Plex</span></label>
+              </div>
+            </div>
+            <!-- Game copy presets -->
+            <div class="form-group" id="batch-game-presets" style="display:none">
+              <label>Default Copy Preset</label>
+              <div class="form-row" style="gap:8px;align-items:end">
+                <div class="form-group" style="flex:1">
+                  <label style="font-size:11px">Platform</label>
+                  <select id="batch-platform" class="select-field">
+                    <option value="">None</option>
+                  </select>
+                </div>
+                <div class="form-group" style="flex:1">
+                  <label style="font-size:11px">Type</label>
+                  <select id="batch-type" class="select-field">
+                    <option value="physical">Physical</option>
+                    <option value="digital">Digital</option>
+                  </select>
+                </div>
+                <div class="form-group" id="batch-condition-group" style="flex:1">
+                  <label style="font-size:11px">Condition</label>
+                  <select id="batch-condition" class="select-field">
+                    <option value="">None</option>
+                    <option value="Sealed / New">Sealed / New</option>
+                    <option value="Complete in Box with Manual">CIB w/ Manual</option>
+                    <option value="Complete in Box">CIB</option>
+                    <option value="Loose Disc">Loose Disc</option>
+                    <option value="Loose Cart">Loose Cart</option>
+                    <option value="Box Only">Box Only</option>
+                    <option value="Manual Only">Manual Only</option>
+                  </select>
+                </div>
+                <div class="form-group" id="batch-store-group" style="flex:1;display:none">
+                  <label style="font-size:11px">Store</label>
+                  <select id="batch-store" class="select-field">
+                    <option value="">None</option>
+                    <option value="Steam">Steam</option>
+                    <option value="PlayStation Store">PlayStation Store</option>
+                    <option value="Xbox Store">Xbox Store</option>
+                    <option value="Nintendo eShop">Nintendo eShop</option>
+                    <option value="Epic Games Store">Epic Games</option>
+                    <option value="GOG">GOG</option>
+                    <option value="Humble Bundle">Humble Bundle</option>
+                    <option value="EA App">EA App</option>
+                    <option value="Ubisoft Connect">Ubisoft Connect</option>
+                    <option value="Battle.net">Battle.net</option>
+                    <option value="itch.io">itch.io</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Batch search (TMDB for movies/TV, RAWG for games) -->
+            <div class="search-wrapper" id="batch-search-wrapper">
+              <label id="batch-search-label">Search TMDB to add to queue</label>
+              <input type="text" id="batch-search-input" class="text-field" placeholder="Type a title…">
+              <ul id="batch-results-list" class="tmdb-dropdown"></ul>
+            </div>
+          </div>
+
+          <div class="batch-queue-header">
+            <h3>Queue <span id="batch-queue-count">(0)</span></h3>
+            <div class="batch-queue-actions">
+              <button class="btn btn-sm" id="batch-clear">Clear All</button>
+              <button class="btn btn-primary" id="batch-add-all">Add All to Library</button>
+            </div>
+          </div>
+          <div id="batch-queue" class="batch-queue"></div>
+        </div>
+      </section>
+
+      <!-- ===== IMPORT ===== -->
+      <section id="view-import" class="view">
+        <div class="form-container" style="max-width:860px">
+          <h2>Import</h2>
+          <p class="muted" id="import-description">Import your library from various digital platforms and services.</p>
+
+          <div class="import-sources" id="import-sources">
+
+            <!-- ── Movie imports ── -->
+            <div class="import-card movie-import" data-import="youtube">
+              <div class="import-card-header">
+                <div class="import-card-icon"><img src="logos/youtube.svg" alt="YouTube" width="20" height="20"></div>
+                <div class="import-card-info">
+                  <strong>YouTube</strong>
+                  <span class="muted">Import purchased movies from YouTube</span>
+                </div>
+                <span class="import-chevron">›</span>
+              </div>
+              <div class="import-card-body">
+                <div class="import-instructions">
+                  <ol>
+                    <li>In <strong>Chrome</strong>, navigate to <code>https://www.youtube.com/feed/storefront</code></li>
+                    <li>Click <strong>Purchased</strong> → <strong>View All</strong></li>
+                    <li>Right-click → <strong>Save As</strong> to download the HTML file</li>
+                    <li>Drag the file below or click "Choose file"</li>
+                  </ol>
+                </div>
+                <div class="drop-zone import-drop" data-import="youtube">
+                  <div class="drop-zone-content">
+                    <p>Drag &amp; drop the saved HTML file here</p>
+                    <button class="btn import-pick-file" data-import="youtube">Or choose file…</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="import-card movie-import" data-import="movies-anywhere">
+              <div class="import-card-header">
+                <div class="import-card-icon"><img src="logos/moviesanywhere.png" alt="Movies Anywhere" width="20" height="20"></div>
+                <div class="import-card-info">
+                  <strong>Movies Anywhere</strong>
+                  <span class="muted">Import your Movies Anywhere digital library</span>
+                </div>
+                <span class="import-chevron">›</span>
+              </div>
+              <div class="import-card-body">
+                <div class="import-instructions">
+                  <ol>
+                    <li>In <strong>Chrome</strong>, open <code>https://moviesanywhere.com/my-movies</code></li>
+                    <li>Right-click → <strong>Save As</strong> to download the HTML file</li>
+                    <li>Drag the file below or click "Choose file"</li>
+                  </ol>
+                </div>
+                <div class="drop-zone import-drop" data-import="movies-anywhere">
+                  <div class="drop-zone-content">
+                    <p>Drag &amp; drop the saved HTML file here</p>
+                    <button class="btn import-pick-file" data-import="movies-anywhere">Or choose file…</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="import-card movie-import" data-import="fandango">
+              <div class="import-card-header">
+                <div class="import-card-icon"><img src="logos/fandango-at-home.svg" alt="Fandango" width="20" height="20"></div>
+                <div class="import-card-info">
+                  <strong>Fandango at Home</strong>
+                  <span class="muted">Import your Fandango at Home (Vudu) library</span>
+                </div>
+                <span class="import-chevron">›</span>
+              </div>
+              <div class="import-card-body">
+                <div class="import-instructions">
+                  <ol>
+                    <li>In <strong>Chrome</strong>, open <code>https://athome.fandango.com/content/browse/mymovies</code></li>
+                    <li>Right-click → <strong>Save As</strong> to download the HTML file</li>
+                    <li>Drag the file below or click "Choose file"</li>
+                  </ol>
+                </div>
+                <div class="drop-zone import-drop" data-import="fandango">
+                  <div class="drop-zone-content">
+                    <p>Drag &amp; drop the saved HTML file here</p>
+                    <button class="btn import-pick-file" data-import="fandango">Or choose file…</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="import-card disabled movie-import" data-import="apple-tv">
+              <div class="import-card-header">
+                <div class="import-card-icon"><img src="logos/apple-tv.svg" alt="Apple TV" width="20" height="20"></div>
+                <div class="import-card-info">
+                  <strong>Apple TV Movies</strong>
+                  <span class="muted">Coming soon</span>
+                </div>
+                <span class="import-chevron" style="opacity:0.3">›</span>
+              </div>
+            </div>
+
+            <div class="import-card movie-import" data-import="letterboxd">
+              <div class="import-card-header">
+                <div class="import-card-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                </div>
+                <div class="import-card-info">
+                  <strong>Letterboxd Ratings</strong>
+                  <span class="muted">Import ratings and reviews from Letterboxd</span>
+                </div>
+                <span class="import-chevron">›</span>
+              </div>
+              <div class="import-card-body">
+                <div class="import-instructions">
+                  <ol>
+                    <li>Go to <code>https://letterboxd.com/settings/data/</code> and export your data</li>
+                    <li>You'll receive a <strong>.zip</strong> file</li>
+                    <li>Drag the <strong>.zip</strong> file below</li>
+                  </ol>
+                </div>
+                <div class="drop-zone import-drop" data-import="letterboxd">
+                  <div class="drop-zone-content">
+                    <p>Drag &amp; drop your Letterboxd export <strong>.zip</strong> here</p>
+                    <button class="btn import-pick-file" data-import="letterboxd">Or choose file…</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ── Game imports ── -->
+            <div class="import-card game-import" data-import="csv" style="display:none">
+              <div class="import-card-header">
+                <div class="import-card-icon">
+                  <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M4 0a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4.5L9.5 0H4zm5.5 1.5V5H13L9.5 1.5zM5 8h6v1H5V8zm0 2h6v1H5v-1zm0 2h4v1H5v-1z"/></svg>
+                </div>
+                <div class="import-card-info">
+                  <strong>CSV / Text File</strong>
+                  <span class="muted">Import game titles from a CSV or one-per-line text file</span>
+                </div>
+                <span class="import-chevron">›</span>
+              </div>
+              <div class="import-card-body">
+                <div class="import-instructions">
+                  <ol>
+                    <li>Prepare a <strong>.csv</strong> with a "Name" or "Title" column, or a plain <strong>.txt</strong> with one game per line</li>
+                    <li>Optionally include a "Platform" column</li>
+                    <li>Drag the file below or click "Choose file"</li>
+                  </ol>
+                </div>
+                <div class="drop-zone import-drop" data-import="csv">
+                  <div class="drop-zone-content">
+                    <p>Drag &amp; drop the file here</p>
+                    <button class="btn import-pick-file" data-import="csv">Or choose file…</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="import-preview" class="letterboxd-preview" style="display:none">
+            <div class="letterboxd-header">
+              <h3>Import Preview <span id="import-count"></span></h3>
+              <div class="letterboxd-actions">
+                <label class="check-label"><input type="checkbox" id="import-add-new" checked> Add new</label>
+                <label class="check-label"><input type="checkbox" id="import-update-existing" checked> Update existing</label>
+                <button class="btn btn-primary" id="import-execute-btn">Import</button>
+              </div>
+            </div>
+            <div id="import-entries" class="letterboxd-entries"></div>
+          </div>
+
+          <div id="import-progress" style="display:none">
+            <div class="progress-bar-container">
+              <div class="progress-bar" id="import-progress-bar"></div>
+            </div>
+            <p id="import-progress-text" class="muted"></p>
+          </div>
+
+          <div id="import-fuzzy-review" style="display:none"></div>
+          <div id="import-result" style="display:none"></div>
+        </div>
+      </section>
+
+      <!-- ===== SETTINGS ===== -->
+      <section id="view-settings" class="view">
+        <div class="form-container settings-container">
+          <h2>Settings</h2>
+
+          <div class="settings-section">
+            <h3>Library Directory</h3>
+            <p class="muted">Point to your local clone of the My Media Database repository.</p>
+            <div class="settings-row">
+              <input type="text" id="s-library-path" class="text-field mono" readonly placeholder="No directory selected">
+              <button class="btn" id="s-choose-dir">Browse…</button>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3>TMDB API Key</h3>
+            <p class="muted">Required for movie &amp; TV show search and poster artwork. Get a free key at <a href="#" id="tmdb-link">themoviedb.org</a>.</p>
+            <input type="text" id="s-tmdb-key" class="text-field mono" placeholder="Enter your TMDB API key">
+            <label class="check-label" style="margin-top:8px"><input type="checkbox" id="s-tmdb-key-in-config"> Include TMDB key in config.json</label>
+          </div>
+
+          <div class="settings-section">
+            <h3>IGDB Credentials (Games — Primary)</h3>
+            <p class="muted">Required for IGDB game search and cover art. Get free Twitch API credentials at <a href="#" id="igdb-link">dev.twitch.tv/console</a>.</p>
+            <label class="field-label" style="margin-top:8px">Client ID</label>
+            <input type="text" id="s-igdb-client-id" class="text-field mono" placeholder="Enter your IGDB/Twitch Client ID">
+            <label class="field-label" style="margin-top:8px">Client Secret</label>
+            <input type="password" id="s-igdb-client-secret" class="text-field mono" placeholder="Enter your IGDB/Twitch Client Secret">
+            <label class="check-label" style="margin-top:8px"><input type="checkbox" id="s-igdb-in-config"> Include IGDB credentials in config.json</label>
+          </div>
+
+          <div class="settings-section">
+            <h3>RAWG API Key</h3>
+            <p class="muted">Required for game search and cover art. Get a free key at <a href="#" id="rawg-link">rawg.io/apidocs</a>.</p>
+            <input type="text" id="s-rawg-key" class="text-field mono" placeholder="Enter your RAWG API key">
+            <label class="check-label" style="margin-top:8px"><input type="checkbox" id="s-rawg-key-in-config"> Include RAWG key in config.json</label>
+          </div>
+
+          <div class="settings-section">
+            <h3>Poster Mode (Movies &amp; TV)</h3>
+            <div class="poster-mode-options">
+              <label class="radio-card">
+                <input type="radio" name="poster-mode" value="local" checked>
+                <div class="radio-card-body">
+                  <strong>Local (Recommended)</strong>
+                  <span class="muted">Downloaded to <code>posters/</code>. Faster, works offline.</span>
+                </div>
+              </label>
+              <label class="radio-card">
+                <input type="radio" name="poster-mode" value="stream">
+                <div class="radio-card-body">
+                  <strong>Stream from TMDB</strong>
+                  <span class="muted">Loaded from TMDB on each view. Slower, uses bandwidth.</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3>Default Game API</h3>
+            <div class="poster-mode-options">
+              <label class="radio-card">
+                <input type="radio" name="game-api" value="igdb" checked>
+                <div class="radio-card-body">
+                  <strong>IGDB (Recommended)</strong>
+                  <span class="muted">Uses Twitch/IGDB API. Better cover art and metadata.</span>
+                </div>
+              </label>
+              <label class="radio-card">
+                <input type="radio" name="game-api" value="rawg">
+                <div class="radio-card-body">
+                  <strong>RAWG</strong>
+                  <span class="muted">Uses RAWG API. Simpler setup, no OAuth.</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3>Cover Mode (Games)</h3>
+            <div class="poster-mode-options">
+              <label class="radio-card">
+                <input type="radio" name="cover-mode" value="local">
+                <div class="radio-card-body">
+                  <strong>Local</strong>
+                  <span class="muted">Downloaded to <code>covers/</code>. Faster, works offline.</span>
+                </div>
+              </label>
+              <label class="radio-card">
+                <input type="radio" name="cover-mode" value="remote" checked>
+                <div class="radio-card-body">
+                  <strong>Remote (Default)</strong>
+                  <span class="muted">Loaded from IGDB/RAWG on each view.</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3>Download Posters</h3>
+            <p class="muted">Download all missing poster images for movies &amp; TV shows.</p>
+            <div class="settings-row">
+              <button class="btn btn-primary" id="s-download-posters">Download Missing Posters</button>
+              <button class="btn" id="s-reveal-posters">Reveal in Finder</button>
+            </div>
+            <div id="poster-download-progress" style="display:none">
+              <div class="progress-bar-container"><div class="progress-bar" id="poster-progress-bar"></div></div>
+              <p id="poster-progress-text" class="muted"></p>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3>Download Covers</h3>
+            <p class="muted">Download all missing cover images for games.</p>
+            <div class="settings-row">
+              <button class="btn btn-primary" id="s-download-covers">Download Missing Covers</button>
+              <button class="btn" id="s-reveal-covers">Reveal in Finder</button>
+            </div>
+            <div id="cover-download-progress" style="display:none">
+              <div class="progress-bar-container"><div class="progress-bar" id="cover-progress-bar"></div></div>
+              <p id="cover-progress-text" class="muted"></p>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3>Features</h3>
+            <label class="check-label" style="margin-top:8px"><input type="checkbox" id="s-featured"> Enable Featured page</label>
+          </div>
+
+          <div class="settings-section">
+            <h3>Modes</h3>
+            <p class="muted">Toggle which media types are visible in the sidebar.</p>
+            <label class="check-label" style="margin-top:8px"><input type="checkbox" id="s-tvshows" checked> TV Shows</label>
+            <label class="check-label" style="margin-top:4px"><input type="checkbox" id="s-games" checked> Games</label>
+          </div>
+
+          <div class="settings-section">
+            <h3>Custom Fields</h3>
+            <p class="muted">Custom tag fields shown on the add/edit form (e.g. "iPod", "Kids", "Backlog").</p>
+            <div id="s-custom-fields-list" class="custom-fields-list"></div>
+            <div class="settings-row" style="margin-top:8px">
+              <input type="text" id="s-custom-field-input" class="text-field" placeholder="New field name…">
+              <button class="btn" id="s-custom-field-add">Add Field</button>
+            </div>
+          </div>
+
+          <div class="settings-actions">
+            <button class="btn btn-primary" id="s-save">Save Settings</button>
+            <span class="save-status" id="s-save-status"></span>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ===== EDIT MODAL ===== -->
+  <div id="edit-modal" class="modal-overlay" style="display:none">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h3 id="modal-title">Edit</h3>
+        <button class="modal-close" id="modal-close">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
