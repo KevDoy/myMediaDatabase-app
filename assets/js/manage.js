@@ -363,11 +363,13 @@ const Manage = (() => {
 
       const stars = m.rating ? '★'.repeat(Math.floor(m.rating)) + (m.rating % 1 ? '½' : '') : '—';
       const dateVal = m.firstAirDate || m.releaseDate || '';
+      const borrowed = (m.borrowedBy || '').trim();
+      const borrowedHtml = borrowed ? ` <span class="text-secondary" style="font-size:.78rem">· ${escHtml(borrowed)}</span>` : '';
 
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${idVal}</td>
-        <td>${escHtml(m.title)}</td>
+        <td>${escHtml(m.title)}${borrowedHtml}</td>
         <td>${dateVal}</td>
         <td style="font-size:.82rem">${stars}</td>
         <td style="font-size:.82rem">${escHtml(extra)}</td>
@@ -872,6 +874,11 @@ const Manage = (() => {
     });
   }
 
+  function applyBorrowedBy(item) {
+    const name = document.getElementById('field-borrowedBy')?.value.trim() || '';
+    if (name) item.borrowedBy = name;
+  }
+
   function saveFromForm() {
     const title = document.getElementById('field-title').value.trim();
     if (!title) { alert('Title is required'); return; }
@@ -912,6 +919,7 @@ const Manage = (() => {
     if (movie.formats.physical.length > 0) {
       movie.backedUp = document.getElementById('field-backedUp').checked;
     }
+    applyBorrowedBy(movie);
     document.querySelectorAll('#custom-field-checks .custom-field-cb:checked').forEach(cb => {
       movie.customTags[cb.value] = true;
     });
@@ -951,6 +959,7 @@ const Manage = (() => {
     document.querySelectorAll('#custom-field-checks .custom-field-cb:checked').forEach(cb => {
       show.customTags[cb.value] = true;
     });
+    applyBorrowedBy(show);
 
     if (editIndex >= 0) {
       tvShows[editIndex] = show;
@@ -997,6 +1006,7 @@ const Manage = (() => {
     document.querySelectorAll('#custom-field-checks .custom-field-cb:checked').forEach(cb => {
       game.customTags[cb.value] = true;
     });
+    applyBorrowedBy(game);
 
     if (editIndex >= 0) {
       games[editIndex] = game;
@@ -1348,6 +1358,9 @@ const Manage = (() => {
     currentTags = [...(m.tags || [])];
     renderTags();
 
+    const borrowedField = document.getElementById('field-borrowedBy');
+    if (borrowedField) borrowedField.value = m.borrowedBy || '';
+
     // Custom fields
     const ct = m.customTags || {};
     document.querySelectorAll('#custom-field-checks .custom-field-cb').forEach(cb => { cb.checked = !!ct[cb.value]; });
@@ -1384,6 +1397,8 @@ const Manage = (() => {
     currentRating = 0;
     renderStarPicker();
     document.getElementById('field-watched').checked = false;
+    const borrowedField = document.getElementById('field-borrowedBy');
+    if (borrowedField) borrowedField.value = '';
     document.getElementById('field-played').checked = false;
     document.getElementById('field-completed').checked = false;
     currentTags = [];

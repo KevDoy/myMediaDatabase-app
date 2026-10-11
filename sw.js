@@ -3,7 +3,7 @@
    Cache-first strategy for app shell, network-first for data
    ============================================================ */
 
-const CACHE_NAME = 'my-media-db-v2';
+const CACHE_NAME = 'my-media-db-v5';
 
 const APP_SHELL = [
   '/',
@@ -17,6 +17,7 @@ const APP_SHELL = [
   '/assets/vendor/bootstrap-icons/font/bootstrap-icons.min.css',
   '/assets/vendor/bootstrap-icons/font/fonts/bootstrap-icons.woff2',
   '/assets/vendor/bootstrap-icons/font/fonts/bootstrap-icons.woff',
+  '/assets/vendor/material-symbols/material-symbols-rounded-playing-cards.woff2',
   '/manifest.json',
 ];
 

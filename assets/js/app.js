@@ -210,6 +210,7 @@ const App = (() => {
     bindLogoReset();
     bindModeToggle(modes);
     updateSortVisibility();
+    bindTonight();
     renderGrid();
 
     if (config.posterMode === 'remote' && movies.length) {
@@ -539,14 +540,14 @@ const App = (() => {
       let parts;
       if (currentMode === 'games') {
         parts = [
-          m.title, m.developer, m.publisher,
+          m.title, m.developer, m.publisher, m.borrowedBy,
           ...(m.genres || []), ...(m.tags || []),
           ...(m.copies || []).map(c => c.platform),
           ...(m.copies || []).map(c => c.store || ''),
         ];
       } else {
         parts = [
-          m.title, m.director, m.creator,
+          m.title, m.director, m.creator, m.borrowedBy,
           ...(m.cast || []), ...(m.genres || []), ...(m.tags || []),
         ];
       }
@@ -693,6 +694,7 @@ const App = (() => {
     }
     const hasUnrated = data.some(m => !m.rating || m.rating <= 0);
     if (hasUnrated) chips.push({ key: 'no-rating', label: 'No Rating' });
+    if (data.some(m => (m.borrowedBy || '').trim())) chips.push({ key: 'borrowed', label: 'Borrowed' });
 
     function syncActiveFilter(key, label) {
       activeFilter = key;
@@ -705,8 +707,10 @@ const App = (() => {
     }
 
     const topLevelKeys = new Set(['all', 'digital', 'physical', 'complete-set']);
-    const trailingKeys = new Set(['not-watched', 'not-played', 'no-rating']);
+    const trailingKeys = new Set(['not-watched', 'not-played', 'no-rating', 'borrowed']);
+    const statusKeys = new Set(['not-watched', 'not-played', 'no-rating', 'borrowed']);
     let dividerInserted = false;
+    let statusDivider = false;
 
     chips.forEach((c) => {
       if (!dividerInserted && !topLevelKeys.has(c.key) && !trailingKeys.has(c.key)) {
@@ -715,7 +719,8 @@ const App = (() => {
         sep.className = 'me-filter-divider';
         mobileContainer.appendChild(sep);
       }
-      if (c.key === 'not-watched' || c.key === 'not-played') {
+      if (!statusDivider && statusKeys.has(c.key)) {
+        statusDivider = true;
         const sep = document.createElement('span');
         sep.className = 'me-filter-divider';
         mobileContainer.appendChild(sep);
@@ -738,6 +743,7 @@ const App = (() => {
     if (activeFilter === 'not-watched') return list.filter(m => !m.watched);
     if (activeFilter === 'not-played') return list.filter(g => !g.played);
     if (activeFilter === 'no-rating') return list.filter(m => !m.rating || m.rating <= 0);
+    if (activeFilter === 'borrowed') return list.filter(m => (m.borrowedBy || '').trim());
     if (activeFilter === 'complete-set') return list.filter(isCompleteSet);
     if (activeFilter.startsWith('custom:')) {
       const field = activeFilter.slice(7);
@@ -786,8 +792,11 @@ const App = (() => {
   // ---------- Sort visibility (hide on Featured mode) ----------
   function updateSortVisibility() {
     const sortBubble = document.getElementById('sortBubble');
+    const tonightBtn = document.getElementById('tonightBtn');
+    const featured = currentMode === 'featured';
+    if (tonightBtn) tonightBtn.hidden = featured;
     if (!sortBubble) return;
-    if (currentMode === 'featured') {
+    if (featured) {
       sortBubble.style.display = 'none';
     } else {
       sortBubble.style.display = '';
@@ -1477,9 +1486,19 @@ const App = (() => {
     return item.genres.map(g => `<span class="genre-tag">${g}</span>`).join('');
   }
 
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, (ch) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+    }[ch]));
+  }
+
   function buildCredits(item) {
     const mode = item._mediaType || getMediaType();
     let html = '';
+    const borrowed = (item.borrowedBy || '').trim();
+    if (borrowed) {
+      html += `<p class="detail-credits-line borrowed-line"><span class="credits-label">Borrowed by</span> ${escapeHtml(borrowed)}</p>`;
+    }
     if (mode === 'games') {
       if (item.developer) html += `<p class="detail-credits-line"><span class="credits-label">Developer</span> ${item.developer}</p>`;
       if (item.publisher) html += `<p class="detail-credits-line"><span class="credits-label">Publisher</span> ${item.publisher}</p>`;
@@ -2089,6 +2108,447 @@ const App = (() => {
         positionSliderIndicator(sortBubble, '.me-sort-btn', false);
       }
     });
+  }
+
+  // ---------- Tonight swipe picker ----------
+  const TONIGHT_ROUND = 10;
+  let tonightSession = null;
+
+  function tonightChoices() {
+    if (currentMode === 'tv') {
+      return [
+        { key: 'all', label: 'All Shows' },
+        { key: 'unwatched', label: 'Unwatched Shows' },
+        { key: 'watched', label: 'Watched Shows' },
+      ];
+    }
+    if (currentMode === 'games') {
+      return [
+        { key: 'all', label: 'All Games' },
+        { key: 'unwatched', label: 'Unplayed Games' },
+        { key: 'watched', label: 'Played Games' },
+      ];
+    }
+    return [
+      { key: 'all', label: 'All Movies' },
+      { key: 'unwatched', label: 'Unwatched Movies' },
+      { key: 'watched', label: 'Watched Movies' },
+    ];
+  }
+
+  function tonightEmptyCopy(key) {
+    if (key !== 'all') {
+      const choice = tonightChoices().find(c => c.key === key);
+      return `There aren't any ${choice.label.toLowerCase()} to swipe through.`;
+    }
+    if (currentMode === 'tv') return "There aren't any shows to swipe through.";
+    if (currentMode === 'games') return "There aren't any games to swipe through.";
+    return "There aren't any movies to swipe through.";
+  }
+
+  function tonightPool(key) {
+    const data = activeData();
+    if (key === 'all') return data.slice();
+    const seen = key === 'watched';
+    if (currentMode === 'games') return data.filter(item => !!item.played === seen);
+    return data.filter(item => !!item.watched === seen);
+  }
+
+  function shuffleItems(list) {
+    const copy = list.slice();
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  }
+
+  function tonightStage() {
+    return document.getElementById('tonight-stage');
+  }
+
+  function tonightHeading(text) {
+    const h = document.createElement('h1');
+    h.id = 'tonight-heading';
+    h.className = 'tonight-heading';
+    h.textContent = text;
+    return h;
+  }
+
+  function tonightLead(text) {
+    const p = document.createElement('p');
+    p.className = 'tonight-lead';
+    p.textContent = text;
+    return p;
+  }
+
+  function bindTonight() {
+    const btn = document.getElementById('tonightBtn');
+    const closeBtn = document.getElementById('tonight-close');
+    if (btn) btn.addEventListener('click', openTonight);
+    if (closeBtn) closeBtn.addEventListener('click', closeTonight);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && tonightSession) closeTonight();
+    });
+  }
+
+  function openTonight() {
+    if (currentMode === 'featured') return;
+    const overlay = document.getElementById('tonight-overlay');
+    if (!overlay) return;
+    tonightSession = { phase: 'intro' };
+    overlay.hidden = false;
+    document.body.classList.add('tonight-open');
+    renderTonightIntro();
+  }
+
+  function closeTonight() {
+    const overlay = document.getElementById('tonight-overlay');
+    if (overlay) overlay.hidden = true;
+    document.body.classList.remove('tonight-open');
+    tonightSession = null;
+    const stage = tonightStage();
+    if (stage) stage.innerHTML = '';
+  }
+
+  function renderTonightIntro() {
+    const stage = tonightStage();
+    if (!stage) return;
+    stage.innerHTML = '';
+    const wrap = document.createElement('div');
+    wrap.className = 'tonight-intro';
+    wrap.appendChild(tonightHeading('Tonight'));
+    wrap.appendChild(tonightLead('Swipe through your library. Keep the ones you want, skip the rest.'));
+    const pools = document.createElement('div');
+    pools.className = 'tonight-pools';
+    tonightChoices().forEach((choice) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'tonight-pool-btn';
+      button.textContent = choice.label;
+      button.addEventListener('click', () => startTonightPool(choice.key));
+      pools.appendChild(button);
+    });
+    wrap.appendChild(pools);
+    stage.appendChild(wrap);
+  }
+
+  function startTonightPool(key) {
+    const items = tonightPool(key);
+    tonightSession = {
+      phase: 'deck',
+      poolKey: key,
+      queue: shuffleItems(items),
+      round: [],
+      index: 0,
+      yeses: [],
+      busy: false,
+    };
+    if (tonightSession.queue.length === 0) {
+      renderTonightEmpty(key);
+      return;
+    }
+    beginTonightRound();
+  }
+
+  function beginTonightRound() {
+    if (!tonightSession) return;
+    tonightSession.round = tonightSession.queue.splice(0, TONIGHT_ROUND);
+    tonightSession.index = 0;
+    tonightSession.yeses = [];
+    tonightSession.busy = false;
+    if (tonightSession.round.length === 0) {
+      renderTonightResults();
+      return;
+    }
+    renderTonightDeck();
+  }
+
+  function renderTonightEmpty(key) {
+    const stage = tonightStage();
+    stage.innerHTML = '';
+    const wrap = document.createElement('div');
+    wrap.className = 'tonight-intro';
+    wrap.appendChild(tonightHeading('Nothing in this list'));
+    wrap.appendChild(tonightLead(tonightEmptyCopy(key)));
+    const back = document.createElement('button');
+    back.type = 'button';
+    back.className = 'tonight-text-btn';
+    back.textContent = 'Back';
+    back.addEventListener('click', () => {
+      tonightSession = { phase: 'intro' };
+      renderTonightIntro();
+    });
+    wrap.appendChild(back);
+    stage.appendChild(wrap);
+  }
+
+  function renderTonightDeck() {
+    const stage = tonightStage();
+    stage.innerHTML = '';
+
+    const counter = document.createElement('p');
+    counter.className = 'tonight-counter';
+    counter.id = 'tonight-counter';
+    stage.appendChild(counter);
+
+    const stack = document.createElement('div');
+    stack.className = 'tonight-stack';
+    stack.appendChild(makeTonightBack(2));
+    stack.appendChild(makeTonightBack(1));
+    const top = document.createElement('article');
+    top.className = 'tonight-card tonight-card-top';
+    top.appendChild(document.createElement('div')).className = 'tonight-card-poster';
+    const shade = document.createElement('div');
+    shade.className = 'tonight-card-shade';
+    const title = document.createElement('h2');
+    title.className = 'tonight-card-title';
+    const year = document.createElement('p');
+    year.className = 'tonight-card-year';
+    const overview = document.createElement('p');
+    overview.className = 'tonight-card-overview';
+    shade.append(title, year, overview);
+    top.appendChild(shade);
+    const yesStamp = document.createElement('span');
+    yesStamp.className = 'tonight-stamp tonight-stamp-yes';
+    yesStamp.textContent = 'Yes';
+    const noStamp = document.createElement('span');
+    noStamp.className = 'tonight-stamp tonight-stamp-no';
+    noStamp.textContent = 'No';
+    top.append(yesStamp, noStamp);
+    stack.appendChild(top);
+    stage.appendChild(stack);
+
+    const actions = document.createElement('div');
+    actions.className = 'tonight-actions';
+    actions.appendChild(makeTonightChoice(false));
+    actions.appendChild(makeTonightChoice(true));
+    stage.appendChild(actions);
+
+    bindTonightDrag(top);
+    paintTonightDeck();
+  }
+
+  function makeTonightBack(depth) {
+    const card = document.createElement('article');
+    card.className = 'tonight-card tonight-card-back';
+    card.dataset.depth = String(depth);
+    card.style.setProperty('--depth', String(depth));
+    card.appendChild(document.createElement('div')).className = 'tonight-card-poster';
+    return card;
+  }
+
+  function makeTonightChoice(yes) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'tonight-choice ' + (yes ? 'tonight-yes' : 'tonight-no');
+    button.innerHTML = `<i class="bi ${yes ? 'bi-heart-fill' : 'bi-x-lg'}"></i><span>${yes ? 'Yes' : 'No'}</span>`;
+    button.addEventListener('click', () => flyTonightCard(yes));
+    return button;
+  }
+
+  function fillTonightPoster(holder, item) {
+    holder.innerHTML = '';
+    const prev = _renderingMediaType;
+    _renderingMediaType = item._mediaType || currentMode;
+    const src = posterUrl(item);
+    _renderingMediaType = prev;
+    if (!src) return;
+    const img = document.createElement('img');
+    img.alt = '';
+    img.draggable = false;
+    img.addEventListener('error', () => img.remove());
+    img.src = src;
+    holder.appendChild(img);
+  }
+
+  function paintTonightDeck() {
+    if (!tonightSession) return;
+    const { round, index } = tonightSession;
+    const counter = document.getElementById('tonight-counter');
+    if (counter) counter.textContent = `${index + 1} of ${round.length}`;
+
+    const top = document.querySelector('.tonight-card-top');
+    if (!top) return;
+    const item = round[index];
+    top.style.transition = 'none';
+    top.style.transform = '';
+    top.style.opacity = '1';
+    fillTonightPoster(top.querySelector('.tonight-card-poster'), item);
+    top.querySelector('.tonight-card-title').textContent = item.title || '';
+    const year = (dateKeyFor(item) || '').slice(0, 4);
+    top.querySelector('.tonight-card-year').textContent = year;
+    const overview = (item.overview || '').replace(/\s+/g, ' ').trim();
+    top.querySelector('.tonight-card-overview').textContent = overview;
+    top.querySelector('.tonight-stamp-yes').style.opacity = '0';
+    top.querySelector('.tonight-stamp-no').style.opacity = '0';
+    void top.offsetWidth;
+    top.style.transition = '';
+
+    [1, 2].forEach(depth => {
+      const back = document.querySelector(`.tonight-card-back[data-depth="${depth}"]`);
+      const next = round[index + depth];
+      if (!back) return;
+      if (!next) {
+        back.hidden = true;
+        return;
+      }
+      back.hidden = false;
+      fillTonightPoster(back.querySelector('.tonight-card-poster'), next);
+    });
+    tonightSession.busy = false;
+  }
+
+  function bindTonightDrag(card) {
+    let startX = 0;
+    let dx = 0;
+    let dragging = false;
+
+    card.addEventListener('pointerdown', (e) => {
+      if (!tonightSession || tonightSession.busy || e.button !== 0) return;
+      dragging = true;
+      startX = e.clientX;
+      dx = 0;
+      card.setPointerCapture(e.pointerId);
+      card.style.transition = 'none';
+    });
+
+    card.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      dx = e.clientX - startX;
+      const rot = Math.max(-16, Math.min(16, dx / 20));
+      card.style.transform = `translateX(${dx}px) rotate(${rot}deg)`;
+      card.querySelector('.tonight-stamp-yes').style.opacity = String(Math.min(1, Math.max(0, dx / 90)));
+      card.querySelector('.tonight-stamp-no').style.opacity = String(Math.min(1, Math.max(0, -dx / 90)));
+    });
+
+    function endDrag() {
+      if (!dragging) return;
+      dragging = false;
+      if (Math.abs(dx) >= 100) {
+        flyTonightCard(dx > 0);
+      } else {
+        card.style.transition = 'transform .25s ease';
+        card.style.transform = '';
+        const yesStamp = card.querySelector('.tonight-stamp-yes');
+        const noStamp = card.querySelector('.tonight-stamp-no');
+        if (yesStamp) yesStamp.style.opacity = '0';
+        if (noStamp) noStamp.style.opacity = '0';
+      }
+      dx = 0;
+    }
+
+    card.addEventListener('pointerup', endDrag);
+    card.addEventListener('pointercancel', endDrag);
+  }
+
+  function flyTonightCard(yes) {
+    if (!tonightSession || tonightSession.busy) return;
+    const card = document.querySelector('.tonight-card-top');
+    if (!card) return;
+    tonightSession.busy = true;
+    const item = tonightSession.round[tonightSession.index];
+    if (yes) tonightSession.yeses.push(item);
+    const stamp = card.querySelector(yes ? '.tonight-stamp-yes' : '.tonight-stamp-no');
+    if (stamp) stamp.style.opacity = '1';
+    const x = (yes ? 1 : -1) * (window.innerWidth + 240);
+    const rot = yes ? 18 : -18;
+    let settled = false;
+    const finish = () => {
+      if (settled || !tonightSession) return;
+      settled = true;
+      tonightSession.index += 1;
+      if (tonightSession.index >= tonightSession.round.length) {
+        tonightSession.busy = false;
+        renderTonightResults();
+      } else {
+        paintTonightDeck();
+      }
+    };
+    card.style.transition = 'transform .34s ease, opacity .34s ease';
+    card.style.opacity = '0';
+    card.style.transform = `translateX(${x}px) rotate(${rot}deg)`;
+    card.addEventListener('transitionend', function onEnd(e) {
+      if (e.propertyName !== 'transform') return;
+      card.removeEventListener('transitionend', onEnd);
+      finish();
+    });
+    setTimeout(finish, 420);
+  }
+
+  function renderTonightResults() {
+    if (!tonightSession) return;
+    const stage = tonightStage();
+    stage.innerHTML = '';
+    const yeses = tonightSession.yeses;
+    const more = tonightSession.queue.length > 0;
+    const wrap = document.createElement('div');
+    wrap.className = 'tonight-results';
+
+    if (yeses.length === 0) {
+      wrap.appendChild(tonightHeading('No matches'));
+      wrap.appendChild(tonightLead(more ? 'Want to keep going?' : "That's the end of this list."));
+    } else {
+      wrap.appendChild(tonightHeading('Matches'));
+      if (!more) {
+        const note = document.createElement('p');
+        note.className = 'tonight-note';
+        note.textContent = "That's the end of this list.";
+        wrap.appendChild(note);
+      }
+      const grid = document.createElement('div');
+      grid.className = 'tonight-matches';
+      yeses.forEach(item => grid.appendChild(makeTonightMatch(item)));
+      wrap.appendChild(grid);
+    }
+
+    const actions = document.createElement('div');
+    actions.className = 'tonight-result-actions';
+    if (more) {
+      const keep = document.createElement('button');
+      keep.type = 'button';
+      keep.className = 'tonight-text-btn tonight-primary';
+      keep.textContent = 'Keep going';
+      keep.addEventListener('click', beginTonightRound);
+      actions.appendChild(keep);
+    }
+    const done = document.createElement('button');
+    done.type = 'button';
+    done.className = 'tonight-text-btn';
+    done.textContent = 'Done';
+    done.addEventListener('click', closeTonight);
+    actions.appendChild(done);
+    wrap.appendChild(actions);
+    stage.appendChild(wrap);
+    stage.scrollTop = 0;
+  }
+
+  function makeTonightMatch(item) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'tonight-match';
+    const card = document.createElement('div');
+    card.className = 'poster-card';
+    const holder = document.createElement('div');
+    holder.className = 'tonight-card-poster';
+    fillTonightPoster(holder, item);
+    const img = holder.querySelector('img');
+    if (img) card.appendChild(img);
+    else {
+      const ph = document.createElement('div');
+      ph.className = 'poster-placeholder';
+      ph.textContent = item.title || '';
+      card.appendChild(ph);
+    }
+    const title = document.createElement('span');
+    title.className = 'tonight-match-title';
+    title.textContent = item.title || '';
+    button.append(card, title);
+    button.addEventListener('click', () => {
+      closeTonight();
+      openDetail(item);
+    });
+    return button;
   }
 
   return { init, closeFullScreen, resetAll, FORMAT_META, PLATFORM_META, STORE_META, CONDITIONS };
