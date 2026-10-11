@@ -121,6 +121,9 @@
       <span id="activeFilterLabel">All Movies</span>
     </div>
     <div class="me-header-right">
+      <button type="button" class="me-sort-bubble me-tonight-btn" id="tonightBtn" aria-label="Tonight" title="Tonight">
+        <span class="me-sort-btn active material-symbols-rounded" aria-hidden="true">playing_cards</span>
+      </button>
       <div class="me-sort-bubble" id="sortBubble">
         <button class="me-sort-btn active" data-sort="date-desc" aria-label="Sort by recent"><i class="bi bi-calendar"></i></button>
         <button class="me-sort-btn" data-sort="alpha-asc" aria-label="Sort A-Z"><i class="bi bi-sort-alpha-down"></i></button>
@@ -219,6 +222,13 @@
     <button class="me-search-collapsed" id="meSearchCollapsed" aria-label="Search">
       <i class="bi bi-search"></i>
     </button>
+  </div>
+
+  <div id="tonight-overlay" class="tonight-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="tonight-heading">
+    <button type="button" class="tonight-close" id="tonight-close" aria-label="Close">
+      <i class="bi bi-x-lg"></i>
+    </button>
+    <div class="tonight-stage" id="tonight-stage"></div>
   </div>
 
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

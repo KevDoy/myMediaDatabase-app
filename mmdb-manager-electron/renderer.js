@@ -200,6 +200,38 @@
     return s;
   }
 
+  function borrowedName(item) {
+    return (item?.borrowedBy || '').trim();
+  }
+
+  function applyBorrowedBy(item) {
+    const name = document.getElementById('f-borrowedBy')?.value.trim() || '';
+    if (name) item.borrowedBy = name;
+  }
+
+  function setBorrowedField(item) {
+    const field = document.getElementById('f-borrowedBy');
+    if (field) field.value = borrowedName(item);
+  }
+
+  function borrowedCardHtml(item) {
+    const name = borrowedName(item);
+    if (!name) return '';
+    return `<div class="card-borrowed" title="Borrowed by ${esc(name)}">Borrowed · ${esc(name)}</div>`;
+  }
+
+  function borrowedTitleSuffix(item) {
+    const name = borrowedName(item);
+    if (!name) return '';
+    return ` <span class="borrowed-name" title="Borrowed by ${esc(name)}">· ${esc(name)}</span>`;
+  }
+
+  function borrowedDetailHtml(item) {
+    const name = borrowedName(item);
+    if (!name) return '';
+    return `<div class="borrowed-line">Borrowed by <strong>${esc(name)}</strong></div>`;
+  }
+
   function isGamesMode()  { return manageMode === 'games'; }
   function isTvMode()     { return manageMode === 'tv'; }
   function isMoviesMode() { return manageMode === 'movies'; }
@@ -497,6 +529,7 @@
     document.getElementById('lib-format-filter')?.addEventListener('change', () => renderLibrary());
     document.getElementById('lib-platform-filter')?.addEventListener('change', () => renderLibrary());
     document.getElementById('lib-sort')?.addEventListener('change', () => renderLibrary());
+    document.getElementById('lib-borrowed-filter')?.addEventListener('change', () => renderLibrary());
 
     document.getElementById('view-toggle')?.addEventListener('click', (e) => {
       const btn = e.target.closest('.toggle-btn');
@@ -571,12 +604,14 @@
     const genre  = document.getElementById('lib-genre-filter')?.value || '';
     const format = document.getElementById('lib-format-filter')?.value || '';
     const sort   = document.getElementById('lib-sort')?.value || 'title-asc';
+    const borrowedOnly = !!document.getElementById('lib-borrowed-filter')?.checked;
     const tv = isTvMode();
     const data = tv ? tvShows : movies;
 
     let list = data.filter(m => {
+      if (borrowedOnly && !borrowedName(m)) return false;
       if (search) {
-        const hay = `${m.title} ${m.director || ''} ${m.creator || ''} ${(m.cast||[]).join(' ')} ${(m.genres||[]).join(' ')} ${(m.tags||[]).join(' ')}`.toLowerCase();
+        const hay = `${m.title} ${m.director || ''} ${m.creator || ''} ${borrowedName(m)} ${(m.cast||[]).join(' ')} ${(m.genres||[]).join(' ')} ${(m.tags||[]).join(' ')}`.toLowerCase();
         if (!hay.includes(search)) return false;
       }
       if (genre && !(m.genres || []).includes(genre)) return false;
@@ -616,10 +651,12 @@
     const genre    = document.getElementById('lib-genre-filter')?.value || '';
     const platform = document.getElementById('lib-platform-filter')?.value || '';
     const sort     = document.getElementById('lib-sort')?.value || 'title-asc';
+    const borrowedOnly = !!document.getElementById('lib-borrowed-filter')?.checked;
 
     let list = games.filter(g => {
+      if (borrowedOnly && !borrowedName(g)) return false;
       if (search) {
-        const hay = `${g.title} ${g.developer || ''} ${g.publisher || ''} ${(g.genres||[]).join(' ')} ${(g.tags||[]).join(' ')}`.toLowerCase();
+        const hay = `${g.title} ${g.developer || ''} ${g.publisher || ''} ${borrowedName(g)} ${(g.genres||[]).join(' ')} ${(g.tags||[]).join(' ')}`.toLowerCase();
         if (!hay.includes(search)) return false;
       }
       if (genre && !(g.genres || []).includes(genre)) return false;
@@ -713,6 +750,7 @@
               ${seasonsBadge}
               ${stars ? `<div class="card-stars">${stars}</div>` : ''}
               ${watchedBadge}
+              ${borrowedCardHtml(m)}
             </div>
           </div>`;
       }).join('');
@@ -734,7 +772,7 @@
         return `
           <div class="list-row" data-index="${idx}">
             ${posterSrc ? `<img class="row-poster" src="${esc(posterSrc)}" alt="" loading="lazy">` : '<div class="row-poster-placeholder"></div>'}
-            <span class="row-title">${esc(m.title)}${m.watched ? ' <span class="watched-badge" title="Watched">\u2713</span>' : ''}</span>
+            <span class="row-title">${esc(m.title)}${m.watched ? ' <span class="watched-badge" title="Watched">\u2713</span>' : ''}${borrowedTitleSuffix(m)}</span>
             <span class="row-year">${year}</span>
             ${col}
             <span class="row-rating">${ratingStars(m.rating)}</span>
@@ -778,6 +816,7 @@
               ${platforms ? `<div class="card-seasons">${esc(platforms)}</div>` : ''}
               ${stars ? `<div class="card-stars">${stars}</div>` : ''}
               ${playedBadge}
+              ${borrowedCardHtml(g)}
             </div>
           </div>`;
       }).join('');
@@ -792,7 +831,7 @@
         return `
           <div class="list-row" data-index="${idx}">
             ${coverSrc ? `<img class="row-poster" src="${esc(coverSrc)}" alt="" loading="lazy">` : '<div class="row-poster-placeholder"></div>'}
-            <span class="row-title">${esc(g.title)}${g.played ? ' <span class="watched-badge" title="Played">\u2713</span>' : ''}</span>
+            <span class="row-title">${esc(g.title)}${g.played ? ' <span class="watched-badge" title="Played">\u2713</span>' : ''}${borrowedTitleSuffix(g)}</span>
             <span class="row-year">${year}</span>
             <span class="row-formats">${esc(platforms)}</span>
             <span class="row-rating">${ratingStars(g.rating)}</span>
@@ -896,6 +935,7 @@
         </div>
         <div style="flex:1;display:flex;flex-direction:column;gap:8px">
           <div><span style="font-size:18px;font-weight:700">${esc(m.title)}</span><span style="color:var(--text-muted);margin-left:6px">${year}</span></div>
+          ${borrowedDetailHtml(m)}
           ${detailsHtml}
           <div style="margin-top:auto;padding-top:12px;display:flex;gap:8px">
             <button class="btn btn-primary btn-sm" id="modal-edit-btn">Edit</button>
@@ -952,6 +992,7 @@
         </div>
         <div style="flex:1;display:flex;flex-direction:column;gap:8px">
           <div><span style="font-size:18px;font-weight:700">${esc(g.title)}</span><span style="color:var(--text-muted);margin-left:6px">${year}</span></div>
+          ${borrowedDetailHtml(g)}
           ${g.developer ? `<div style="font-size:12px;color:var(--text-secondary)">Developer: <strong>${esc(g.developer)}</strong></div>` : ''}
           ${g.publisher ? `<div style="font-size:12px;color:var(--text-secondary)">Publisher: <strong>${esc(g.publisher)}</strong></div>` : ''}
           ${g.genres?.length ? `<div style="font-size:12px;color:var(--text-secondary)">Genres: ${esc(g.genres.join(', '))}</div>` : ''}
@@ -1329,6 +1370,7 @@
       movie.backedUp = document.getElementById('f-backedUp')?.checked || false;
     }
     document.querySelectorAll('#item-form .cf-cb').forEach(cb => { if (cb.checked) movie.customTags[cb.value] = true; });
+    applyBorrowedBy(movie);
 
     if (editIndex >= 0) { movies[editIndex] = movie; }
     else {
@@ -1364,6 +1406,7 @@
     };
     if (!show.title) { alert('Title is required'); return; }
     document.querySelectorAll('#item-form .cf-cb').forEach(cb => { if (cb.checked) show.customTags[cb.value] = true; });
+    applyBorrowedBy(show);
 
     if (editIndex >= 0) { tvShows[editIndex] = show; }
     else {
@@ -1410,6 +1453,7 @@
     }
 
     document.querySelectorAll('#item-form .cf-cb').forEach(cb => { if (cb.checked) game.customTags[cb.value] = true; });
+    applyBorrowedBy(game);
 
     if (editIndex >= 0) { games[editIndex] = game; }
     else {
@@ -1457,6 +1501,7 @@
     currentTags = [...(m.tags || [])];
     renderTagList();
     document.getElementById('f-watched').checked = !!m.watched;
+    setBorrowedField(m);
 
     if (tv) {
       populateSeasonsUI(m);
@@ -1503,6 +1548,7 @@
     renderTagList();
     document.getElementById('f-played').checked = !!g.played;
     document.getElementById('f-completed').checked = !!g.completed;
+    setBorrowedField(g);
     document.querySelectorAll('#item-form .cf-cb').forEach(cb => { cb.checked = !!(g.customTags && g.customTags[cb.value]); });
 
     const builder = document.getElementById('copies-builder');
@@ -1545,6 +1591,8 @@
     if (watchedCb) watchedCb.checked = false;
     if (playedCb)  playedCb.checked = false;
     if (completedCb) completedCb.checked = false;
+    const borrowedField = document.getElementById('f-borrowedBy');
+    if (borrowedField) borrowedField.value = '';
 
     document.getElementById('poster-preview').innerHTML = '<span class="poster-placeholder">No Poster</span>';
     document.querySelectorAll('#item-form .cf-cb').forEach(cb => { cb.checked = false; });

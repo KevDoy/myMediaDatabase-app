@@ -378,6 +378,9 @@ a.format-badge-link:hover {
   letter-spacing: .5px;
   margin-right: .4rem;
 }
+.borrowed-line .credits-label {
+  color: #e6c36a;
+}
 
 /* ---- Detail Full-Screen ---- */
 .detail-fullscreen {
@@ -1898,4 +1901,378 @@ a.copy-store-link:hover {
 .copy-row-builder {
   background: rgba(255, 255, 255, 0.03);
   border-color: var(--border-color) !important;
+}
+
+/* ---- Tonight swipe picker ---- */
+@font-face {
+  font-family: 'Material Symbols Rounded';
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url('../vendor/material-symbols/material-symbols-rounded-playing-cards.woff2') format('woff2');
+}
+button.me-tonight-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+  cursor: pointer;
+  font: inherit;
+  color: #fff;
+}
+.me-tonight-btn .me-sort-btn {
+  pointer-events: none;
+}
+.me-tonight-btn .material-symbols-rounded {
+  font-family: 'Material Symbols Rounded';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  -webkit-font-feature-settings: 'liga';
+  font-feature-settings: 'liga';
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 40;
+  user-select: none;
+}
+@media (min-width: 768px) {
+  .me-tonight-btn .material-symbols-rounded {
+    font-size: 22px;
+  }
+}
+.me-tonight-btn[hidden] {
+  display: none;
+}
+
+.tonight-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  background: rgba(8, 8, 8, 0.78);
+  -webkit-backdrop-filter: blur(28px) saturate(1.3);
+  backdrop-filter: blur(28px) saturate(1.3);
+  color: var(--text-primary);
+}
+.tonight-overlay[hidden] {
+  display: none;
+}
+
+.tonight-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 0.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  background: rgba(200, 200, 200, 0.12);
+  color: #f0f0f0;
+  font-size: 1rem;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.tonight-close:hover {
+  background: rgba(200, 200, 200, 0.24);
+}
+
+.tonight-stage {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 72px 20px 32px;
+  overflow: auto;
+}
+
+.tonight-intro,
+.tonight-results {
+  width: min(420px, 100%);
+  text-align: center;
+}
+.tonight-results {
+  width: min(760px, 100%);
+}
+
+.tonight-heading {
+  margin: 0 0 8px;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+}
+.tonight-lead {
+  margin: 0 auto 28px;
+  max-width: 34ch;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.tonight-pools {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.tonight-pool-btn {
+  width: 100%;
+}
+.tonight-intro > .tonight-text-btn {
+  width: 100%;
+}
+.tonight-pool-btn,
+.tonight-text-btn {
+  border: 0.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50px;
+  padding: 14px 22px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f0f0f0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  background: linear-gradient(
+    135deg,
+    rgba(180, 180, 180, 0.22) 0%,
+    rgba(120, 120, 120, 0.15) 40%,
+    rgba(80, 80, 80, 0.20) 60%,
+    rgba(150, 150, 150, 0.18) 100%
+  );
+  -webkit-backdrop-filter: blur(40px) saturate(1.6) brightness(0.95);
+  backdrop-filter: blur(40px) saturate(1.6) brightness(0.95);
+  box-shadow:
+    inset 0 1.5px 1px rgba(255, 255, 255, 0.18),
+    0 2px 12px rgba(0, 0, 0, 0.2);
+  transition: background 0.2s, color 0.2s;
+}
+.tonight-pool-btn:hover,
+.tonight-text-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.16);
+}
+.tonight-text-btn.tonight-primary {
+  background: var(--accent);
+  border-color: transparent;
+}
+.tonight-text-btn.tonight-primary:hover {
+  background: var(--accent-hover);
+}
+
+.tonight-counter {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+}
+
+.tonight-stack {
+  position: relative;
+  width: min(340px, 88vw);
+  height: min(520px, calc(100vh - 230px));
+  min-height: 320px;
+  margin: 14px 0 22px;
+}
+
+.tonight-card {
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #161616;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+  touch-action: none;
+  user-select: none;
+}
+.tonight-card-back {
+  pointer-events: none;
+  transform: scale(calc(1 - var(--depth) * 0.045)) translateY(calc(var(--depth) * 12px));
+  opacity: 0.85;
+}
+.tonight-card-back[hidden] {
+  display: none;
+}
+.tonight-card-top {
+  cursor: grab;
+}
+.tonight-card-top:active {
+  cursor: grabbing;
+}
+
+.tonight-card-poster {
+  position: absolute;
+  inset: 0;
+  background: #111;
+}
+.tonight-card-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+.tonight-card-shade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 56px 16px 16px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.92) 42%, rgba(0, 0, 0, 0));
+  text-align: left;
+}
+.tonight-card-title {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+.tonight-card-year {
+  margin: 4px 0 0;
+  color: rgba(240, 240, 240, 0.75);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.tonight-card-year:empty {
+  display: none;
+}
+.tonight-card-overview {
+  margin: 8px 0 0;
+  color: rgba(240, 240, 240, 0.82);
+  font-size: 0.86rem;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.tonight-card-overview:empty {
+  display: none;
+}
+
+.tonight-stamp {
+  position: absolute;
+  top: 22px;
+  padding: 4px 10px;
+  border: 3px solid;
+  border-radius: 8px;
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0;
+  pointer-events: none;
+}
+.tonight-stamp-yes {
+  left: 18px;
+  color: #3ddc84;
+  border-color: #3ddc84;
+  transform: rotate(-12deg);
+}
+.tonight-stamp-no {
+  right: 18px;
+  color: #ff5a5f;
+  border-color: #ff5a5f;
+  transform: rotate(12deg);
+}
+
+.tonight-actions,
+.tonight-result-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+.tonight-result-actions {
+  gap: 12px;
+  margin-top: 22px;
+  flex-wrap: wrap;
+}
+.tonight-choice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 76px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #f0f0f0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.tonight-choice i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  border: 0.5px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.16);
+}
+.tonight-yes i {
+  color: #3ddc84;
+  border-color: rgba(61, 220, 132, 0.45);
+}
+.tonight-no i {
+  color: #ff5a5f;
+  border-color: rgba(255, 90, 95, 0.45);
+}
+.tonight-choice:hover i {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.tonight-note {
+  margin: 8px 0 0;
+  color: var(--text-secondary);
+}
+
+.tonight-matches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  gap: 14px 12px;
+  width: 100%;
+  margin-top: 8px;
+  text-align: left;
+}
+.tonight-match {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.tonight-match .poster-card {
+  width: 100%;
+}
+.tonight-match-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+body.tonight-open {
+  overflow: hidden;
 }
